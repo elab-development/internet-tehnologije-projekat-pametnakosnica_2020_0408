@@ -54,9 +54,11 @@ def register_user():
 def login_user():
     email = request.json["email"]
     password = request.json["password"]
-    username = request.json["username"]
+    # username = request.json["username"]
     
-    user = User.query.filter(or_(User.email == email, User.username == username)).first()
+    # user = User.query.filter(or_(User.email == email, User.username == username)).first()
+    user = User.query.filter_by(email=email).first()
+    
     
     if user is None:
         return jsonify({"error": "Unauthorized"}), 401
@@ -73,3 +75,8 @@ def login_user():
         "firstname": user.firstname,
         "lastname": user.lastname
     })
+    
+@bp.route('/logout', methods=['POST'])
+def logout_user():
+    session.pop("user_id")
+    return "200"
