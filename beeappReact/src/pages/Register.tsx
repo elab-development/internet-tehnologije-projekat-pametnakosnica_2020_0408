@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import httpClient from '../httpClient'
 import { Button, Flex, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
-import { Form } from 'react-router-dom'
+import { Form, useNavigate } from 'react-router-dom'
 
 const Register = () => {
     const[email, setEmail] = useState("")
@@ -9,6 +9,7 @@ const Register = () => {
     const[username, setUsername] = useState("")
     const[firstname, setFirstName] = useState("")
     const[lastname, setLastName]  = useState("")
+    const navigate = useNavigate()
     
 
     const registerUser = async () =>{
@@ -23,62 +24,17 @@ const Register = () => {
                 lastname
             });
 
-            window.location.href = "/";
+            navigate('../login')
         }
         catch (error: any) {
+            console.log(error)
             if(error.response.status === 401){
-                alert("Invalid credentials")
+                alert("BAD")
             }
         }
     };
 
   return (
-    // <div>
-    //     <h1>Create a new account</h1>
-    //     <form>
-    //         <div>
-    //             <label>Email</label>
-    //             <input  
-    //             type="text" 
-    //             value={email} 
-    //             onChange={(e) => setEmail(e.target.value)} 
-    //             id=""/>
-    //         </div>
-    //         <div>
-    //             <label>Password</label>
-    //             <input  
-    //             type="password" 
-    //             value={password} 
-    //             onChange={(e) => setPassword(e.target.value)} 
-    //             id=""/>
-    //         </div>
-    //         <div>
-    //             <label>Username</label>
-    //             <input  
-    //             type="username" 
-    //             value={username} 
-    //             onChange={(e) => setUsername(e.target.value)} 
-    //             id=""/>
-    //         </div>
-    //         <div>
-    //             <label>First name</label>
-    //             <input  
-    //             type="firstname" 
-    //             value={firstname} 
-    //             onChange={(e) => setFirstName(e.target.value)} 
-    //             id=""/>
-    //         </div>
-    //         <div>
-    //             <label>Last name</label>
-    //             <input  
-    //             type="lastname" 
-    //             value={lastname} 
-    //             onChange={(e) => setLastName(e.target.value)} 
-    //             id=""/>
-    //         </div>
-    //         <button type='button' onClick={() => registerUser()}>Submit</button>
-    //     </form>
-    // </div>
     <Flex p="10px" mb="60px" flexDirection='column' alignItems='center'>
     <Heading as="h2" marginBottom={5}>Register</Heading>
     <Form>

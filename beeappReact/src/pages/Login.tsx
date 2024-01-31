@@ -1,14 +1,15 @@
 import {useContext, useState} from 'react'
 import httpClient from '../httpClient'
-import { Button, Flex, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
-import { Form } from 'react-router-dom'
+import { Button, Flex, FormControl, FormLabel, Heading, Input, useToast } from '@chakra-ui/react'
+import { Form, useNavigate } from 'react-router-dom'
 import { UserContext } from '../context/UserContext'
 
 const Login = () => {
     const[email, setEmail] = useState("")
     const[password, setPassword] = useState("")
-    //const [token, setToken] = useState(sessionStorage.getItem("token"))
     const {token, setToken} = useContext(UserContext)
+    const navigate = useNavigate()
+    const toast = useToast()
 
     const logInUser = async () =>{
         console.log(email, password);
@@ -26,56 +27,30 @@ const Login = () => {
             const resp = await httpClient.post("//localhost:5000/auth/login", data, headers);
             if(resp.status === 200){
                 console.log(resp.data.access_token)
-                //sessionStorage.setItem("token", resp.data.access_token)
                 setToken(resp.data.access_token)
-                //window.location.href = "/";
+                navigate('../dashboard')
             }
         }
         catch (error: any) {
             if(error.response.status === 401){
-                alert("Invalid credentials")
+                //alert("Invalid credentials")
+                toast({
+                    title: 'Bad credentials',
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                    position: 'top'
+                  })
             }
         }
     };
 
-    const logOutUser = async () =>{
-        console.log("loggin out user "+token);
-        setToken('');
-        sessionStorage.removeItem('token');
-    };
 
   return (
-    // <div>
-    //     <h1>Login</h1>
-    //     <form>
-    //         <div>
-    //             <label>Email</label>
-    //             <input  
-    //             type="text" 
-    //             value={email} 
-    //             onChange={(e) => setEmail(e.target.value)} 
-    //             id=""/>
-    //         </div>
-    //         <div>
-    //             <label>Password</label>
-    //             <input  
-    //             type="password" 
-    //             value={password} 
-    //             onChange={(e) => setPassword(e.target.value)} 
-    //             id=""/>
-    //         </div>
-    //         <button type='button' onClick={() => logInUser()}>Submit</button>
-    //     </form>
-    // </div>
     <Flex p="10px" mb="60px" flexDirection="column" alignItems="center">
     {token && token !== "" && token !== null ? (
         <>
-        <Heading as="h2">Logged in with {token}</Heading>
-        <Form>
-            <Button type="button" onClick={() => logOutUser()}>
-            Logout
-            </Button>
-        </Form>
+        <Heading as="h2">You are already logged in!</Heading>
         </>
     ) : (
         <>
