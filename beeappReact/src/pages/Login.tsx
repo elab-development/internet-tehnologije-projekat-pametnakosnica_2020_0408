@@ -8,7 +8,7 @@ const Login = () => {
     const[email, setEmail] = useState("")
     const[password, setPassword] = useState("")
     //const [token, setToken] = useState(sessionStorage.getItem("token"))
-    const [token, setToken] = useContext(UserContext)
+    const {token, setToken} = useContext(UserContext)
 
     const logInUser = async () =>{
         console.log(email, password);
@@ -21,7 +21,7 @@ const Login = () => {
        const headers = {
         
        }
-
+       console.log("RADI")
         try{
             const resp = await httpClient.post("//localhost:5000/auth/login", data, headers);
             if(resp.status === 200){
@@ -68,7 +68,7 @@ const Login = () => {
     //     </form>
     // </div>
     <Flex p="10px" mb="60px" flexDirection="column" alignItems="center">
-    {token && token !== "" && token !== undefined ? (
+    {token && token !== "" && token !== null ? (
         <>
         <Heading as="h2">Logged in with {token}</Heading>
         <Form>

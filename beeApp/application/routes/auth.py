@@ -34,11 +34,15 @@ def login_user():
 @bp.route('/@me')
 @jwt_required()
 def get_current_user():
+    print(request.headers["Authorization"])
     try:
         current_user_identity = get_jwt_identity()
-        user = User.query.filter_by(email=current_user_identity).first()
+        print("THIS IS THE USER IDENTITY "+current_user_identity)
+        user = User.query.filter_by(email=str(current_user_identity)).first()
+        print("?????????????????????????????????????????? "+user.email)
     except:
         return jsonify({"error": "User not found"}), 404
+    
     
 
     if user:
