@@ -36,8 +36,8 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('device_id', sa.Integer(), nullable=False),
     sa.Column('date', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['device_id'], ['beehive.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['device_id'], ['beehive.id'], "fk_userbeehive_beehive"),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], "fk_userbeehive_user"),
     sa.PrimaryKeyConstraint('user_id', 'device_id')
     )
     # ### end Alembic commands ###
