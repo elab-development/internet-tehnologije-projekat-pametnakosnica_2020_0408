@@ -5,10 +5,17 @@ from flask_bcrypt import Bcrypt
 from application.models import *
 from application.extensions import bcrypt, jwt
 from sqlalchemy import or_
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
+from application.config import ApplicationConfig
+from application.extensions import jwt, jwt_redis_blocklist
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+@jwt.token_in_blocklist_loader
+def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
+    jti = jwt_payload["jti"]
+    token_in_redis = jwt_redis_blocklist.get(jti)
+    return token_in_redis is not None
 
 @bp.route('/login', methods=["POST"])
 def login_user():
@@ -18,6 +25,7 @@ def login_user():
     print(password)
     
     user = User.query.filter_by(email=email).first()
+    print(user.id)
     
     
     if user is None:
@@ -34,12 +42,12 @@ def login_user():
 @bp.route('/@me')
 @jwt_required()
 def get_current_user():
-    print(request.headers["Authorization"])
+    # print(request.headers["Authorization"])
     try:
         current_user_identity = get_jwt_identity()
-        print("THIS IS THE USER IDENTITY "+current_user_identity)
+        # print("THIS IS THE USER IDENTITY "+current_user_identity)
         user = User.query.filter_by(email=str(current_user_identity)).first()
-        print("?????????????????????????????????????????? "+user.email)
+        # print("?????????????????????????????????????????? "+user.email)
     except:
         return jsonify({"error": "User not found"}), 404
     
@@ -55,21 +63,6 @@ def get_current_user():
         }), 200
     else:
         return jsonify({"error": "User not found"}), 404
-
-# @bp.route('/@me')
-# def get_current_user():
-#     user_id = session.get("user_id")
-#     if not user_id:
-#         return jsonify({"error": "Unauthorized"}), 401
-    
-#     user = User.query.filter_by(id=user_id).first()
-#     return jsonify({
-#         "id": user.id,
-#         "email": user.email,
-#         "username": user.username,
-#         "firstname": user.firstname,
-#         "lastname": user.lastname
-#     })
 
 @bp.route('/register', methods=["POST"])
 def register_user():
@@ -99,33 +92,15 @@ def register_user():
         "lastname": new_user.lastname
     })
     
-# @bp.route('/login', methods=["POST"])
-# def login_user():
-#     email = request.json["email"]
-#     password = request.json["password"]
-#     # username = request.json["username"]
-    
-#     # user = User.query.filter(or_(User.email == email, User.username == username)).first()
-#     user = User.query.filter_by(email=email).first()
-    
-    
-#     if user is None:
-#         return jsonify({"error": "Unauthorized"}), 401
-    
-#     if not bcrypt.check_password_hash(user.password, password):
-#         return jsonify({"error": "Unauthorized"}), 401
-    
-#     session["user_id"] = user.id
-    
-#     return jsonify({
-#         "id": user.id,
-#         "email": user.email,
-#         "username": user.username,
-#         "firstname": user.firstname,
-#         "lastname": user.lastname
-#     })
-    
-@bp.route('/logout', methods=['POST'])
+# @bp.route('/logout', methods=['POST'])
+# def logout_user():
+#     session.pop("user_id")
+#     return "200"
+
+@bp.route("/logout", methods=["DELETE"])
+@jwt_required()
 def logout_user():
-    session.pop("user_id")
-    return "200"
+    print("EVE GA "+ request.headers["Authorization"])
+    jti = get_jwt()["jti"]
+    jwt_redis_blocklist.set(jti, "")
+    return jsonify(msg="Access token revoked")
