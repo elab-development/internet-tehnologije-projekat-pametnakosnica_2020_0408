@@ -1,7 +1,7 @@
 from flask import Flask
 from application.config import ApplicationConfig
 from application.database import db
-from application.extensions import migrate, bcrypt, server_session, cors, jwt
+from application.extensions import migrate, bcrypt, server_session, cors, jwt, jwt_redis_blocklist
 
 def create_app():
     app = Flask(__name__)
@@ -16,7 +16,8 @@ def create_app():
     migrate.init_app(app, db)
     from application import models
     
-    from application.routes import auth
+    from application.routes import auth, apiary
     app.register_blueprint(auth.bp)
+    app.register_blueprint(apiary.bp)
 
     return app
