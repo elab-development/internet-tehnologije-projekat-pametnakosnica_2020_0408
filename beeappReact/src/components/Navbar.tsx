@@ -7,50 +7,53 @@ import {
   HStack,
   Link,
 } from "@chakra-ui/react"
-import { useContext, useEffect, useState } from "react"
+import { useContext } from "react"
 import { UserContext } from '../context/UserContext'
 import httpClient from "../httpClient"
 import { useNavigate } from "react-router-dom"
 
 export default function Navbar() {
   //const toast = useToast()
-  const {token, setToken} = useContext(UserContext)
-  const [username, setUsername] = useState("")
+  const {user, setUser} = useContext(UserContext)
   const navigate = useNavigate()
 
-  useEffect(()=>{
-    async function func(){
+  // useEffect(()=>{
+  //   async function func(){
     
-      try{
-        const resp = await httpClient.get("//localhost:5000/auth/@me", {
-          headers:{
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          }
-        });
-        if (resp.status !== 200) {
-            console.log(resp)
-        }
-        setUsername(resp.data["username"])
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
+  //     try{
+  //       const resp = await httpClient.get("//localhost:5000/auth/@me", {
+  //         headers:{
+  //           "Content-Type": "application/json",
+  //           Authorization: "Bearer " + token,
+  //         }
+  //       });
+  //       if (resp.status !== 200) {
+  //           console.log(resp)
+  //       }
+  //       setUsername(resp.data["username"])
+  //     } catch (error) {
+  //       console.error("Error fetching user:", error);
+  //     }
 
 
-    }
-    func()
-  }, [token])
+  //   }
+  //   func()
+  // }, [])
 
 
   const logoutUser = async () =>{
-      setToken("")
       localStorage.removeItem('jwt_token')
       await httpClient.delete("//localhost:5000/auth/logout", {
         headers:{
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
+          Authorization: "Bearer " + user.token,
         }
       });
+      setUser({
+        token: null,
+        username: null,
+        email: null,
+      })
       window.location.href = '/'
   }
 
@@ -60,12 +63,12 @@ export default function Navbar() {
     <Heading as="h1" fontSize="1.5em">Bee Smart</Heading>
     <Spacer />
     <HStack spacing="20px">
-      {token && token !== "" && token !== null ? (
+      {user.token && user.token !== "" && user.token !== null ? (
         <>
           <Button onClick={() => navigate('../dashboard')}>Dashboard</Button>
           <Button onClick={() => navigate('../dashboard/createApiary')}>Add apiary</Button>
           <Spacer/>
-          <Text>{username}</Text>
+          <Text>{user.username}</Text>
           <Button onClick={() => logoutUser()}>Logout</Button>
         </>
       ) : (   

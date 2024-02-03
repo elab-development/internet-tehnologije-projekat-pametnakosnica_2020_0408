@@ -7,15 +7,16 @@ import { UserContext } from '../context/UserContext'
 const Login = () => {
     const[email, setEmail] = useState("")
     const[password, setPassword] = useState("")
-    const {token, setToken} = useContext(UserContext)
+    const {user, setUser} = useContext(UserContext)
     const navigate = useNavigate()
     const toast = useToast()
 
     useEffect(() => {
-        if (token && token !== '' && token !== null) {
+        if (user.token && user.token !== '' && user.token !== null) {
           navigate('/dashboard');
         }
-      }, [token, navigate]);
+        console.log("EVE GA ODJE")
+      }, [user.token, navigate]);
 
     const logInUser = async () =>{
         console.log(email, password);
@@ -32,7 +33,7 @@ const Login = () => {
             const resp = await httpClient.post("//localhost:5000/auth/login", data, headers);
             if(resp.status === 200){
                 console.log(resp.data.access_token)
-                setToken(resp.data.access_token)
+                setUser({token: resp.data.access_token, username: null, email: null})
                 navigate('../dashboard')
             }
         }

@@ -48,15 +48,15 @@ const Register = () => {
         </FormControl>
         <FormControl>
             <FormLabel>Username</FormLabel>
-            <Input type="password" onChange={(e)=> setUsername(e.target.value)}/>
+            <Input type="text" onChange={(e)=> setUsername(e.target.value)}/>
         </FormControl>
         <FormControl>
             <FormLabel>Firstname</FormLabel>
-            <Input type="password" onChange={(e)=> setFirstName(e.target.value)}/>
+            <Input type="text" onChange={(e)=> setFirstName(e.target.value)}/>
         </FormControl>
         <FormControl>
             <FormLabel>Lastname</FormLabel>
-            <Input type="password" onChange={(e)=> setLastName(e.target.value)}/>
+            <Input type="text" onChange={(e)=> setLastName(e.target.value)}/>
         </FormControl>
         <Button type='button' onClick={()=>registerUser()}>Register</Button>
     </Form>

@@ -69,19 +69,22 @@ def add_measurement():
     return jsonify({"message": "Apiary measurements added successfully."})
 
 @bp.route('/get_measurements/<page>', methods=["GET"])
+@jwt_required()
 def get_last_measurements(page):
     try:
         page = int(page)
     except ValueError:
         return jsonify({"message": "Invalid page number."}), 400
     
-    apiary = Apiary.query.offset(page - 1).limit(1).first()
-    status_code = 200
+    user_email = get_jwt_identity()
+    user = User.query.filter_by(email=user_email).first()
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    apiary = Apiary.query.filter_by(user=user).offset(page - 1).limit(1).first()
     if not apiary:
         apiary = Apiary.query.first()
         return jsonify({"message": "No more data available.", "status": 204}), 204
-    
-    last_24_hours = datetime.utcnow() - timedelta(hours=24)
 
     last_measurements = (
         Apiary_Measurement.query

@@ -1,22 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import httpClient from '../httpClient';
+import { UserContext } from '../context/UserContext';
+import { Button, Grid, GridItem, HStack, Heading, Spacer } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [apiaryMeasurements, setApiaryMeasurements] = useState([]);
   const [apiary, setApiary] = useState();
   const [currentPage, setCurrentPage] = useState(1);
+  const {user, } = useContext(UserContext)
+  const navigate = useNavigate()
 
   useEffect(() => {
     async function func() {
       try {
-        const resp = await httpClient.get(`//localhost:5000/apiary/get_measurements/${currentPage}`);
+        const resp = await httpClient.get(`//localhost:5000/apiary/get_measurements/${currentPage}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + user.token,
+          },
+        });
+
         if (resp.status === 200) {
           setApiaryMeasurements(resp.data["measurements"]);
           setApiary(resp.data["apiary"]);
-        } else {
+        } else if (resp.status === 204) {
           setCurrentPage(1);
-          console.log(resp);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -26,8 +36,9 @@ const Dashboard = () => {
   }, [currentPage]);
 
   return (
-    <div>
-      <h2>Measurements in the {apiary && apiary["name"]} apiary in {apiary && apiary["location"]}</h2>
+    <Grid alignItems="center" justifyContent='center'>
+      <GridItem>
+      <Heading as="h3">Measurements in the {apiary && apiary["name"]} apiary in {apiary && apiary["location"]}</Heading>
       {apiaryMeasurements.length > 0 && (
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
@@ -45,8 +56,18 @@ const Dashboard = () => {
           </LineChart>
         </ResponsiveContainer>
       )}
-      <button onClick={()=> setCurrentPage(currentPage+1)}>Next Apiary</button>
-    </div>
+      </GridItem>
+      <GridItem alignItems="center" justifyContent='center'>
+        <HStack>
+        <Button onClick={()=> {if (currentPage > 1) {setCurrentPage(currentPage-1)}}}>Previous</Button>
+        <Spacer/>
+        <Button onClick={()=> navigate(`/beehivedash/${currentPage}`)}>Check Beehives</Button>
+        <Spacer/>
+        <Button onClick={()=> setCurrentPage(currentPage+1)}>Next</Button>
+        </HStack>
+
+      </GridItem>
+    </Grid>
   );
 };
 
