@@ -10,11 +10,13 @@ import {
 import { useContext, useEffect, useState } from "react"
 import { UserContext } from '../context/UserContext'
 import httpClient from "../httpClient"
+import { useNavigate } from "react-router-dom"
 
 export default function Navbar() {
   //const toast = useToast()
   const {token, setToken} = useContext(UserContext)
   const [username, setUsername] = useState("")
+  const navigate = useNavigate()
 
   useEffect(()=>{
     async function func(){
@@ -40,9 +42,15 @@ export default function Navbar() {
   }, [token])
 
 
-  const logoutUser = () =>{
+  const logoutUser = async () =>{
       setToken("")
       localStorage.removeItem('jwt_token')
+      await httpClient.delete("//localhost:5000/auth/logout", {
+        headers:{
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        }
+      });
       window.location.href = '/'
   }
 
@@ -54,6 +62,9 @@ export default function Navbar() {
     <HStack spacing="20px">
       {token && token !== "" && token !== null ? (
         <>
+          <Button onClick={() => navigate('../dashboard')}>Dashboard</Button>
+          <Button onClick={() => navigate('../dashboard/createApiary')}>Add apiary</Button>
+          <Spacer/>
           <Text>{username}</Text>
           <Button onClick={() => logoutUser()}>Logout</Button>
         </>
