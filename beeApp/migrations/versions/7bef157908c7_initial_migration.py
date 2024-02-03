@@ -22,8 +22,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('devicename', sa.String(length=50), nullable=True),
     sa.Column('displayname', sa.String(length=50), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('devicename')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),

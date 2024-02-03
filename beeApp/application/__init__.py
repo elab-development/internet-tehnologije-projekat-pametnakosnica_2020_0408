@@ -16,8 +16,9 @@ def create_app():
     migrate.init_app(app, db)
     from application import models
     
-    from application.routes import auth, apiary
+    from application.routes import auth, apiary, beehive
     app.register_blueprint(auth.bp)
     app.register_blueprint(apiary.bp)
+    app.register_blueprint(beehive.bp)
 
     return app

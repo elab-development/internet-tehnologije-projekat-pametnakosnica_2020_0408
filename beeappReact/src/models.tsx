@@ -5,3 +5,9 @@ export interface User {
     firstname: string;
     lastname: string;
   }
+
+export  interface Beehive {
+    id: string;
+    device: string;
+    displayname: string;
+  }

@@ -27,7 +27,7 @@ class Apiary(db.Model):
 class Beehive(db.Model):
     __tablename__ = "beehive"
     id = db.Column(db.String(32), primary_key=True, default=get_uuid)
-    devicename = db.Column(db.String(50), unique=True)
+    device = db.Column(db.String(32), nullable=False)
     displayname = db.Column(db.String(50), nullable=False)
     apiary_id = db.Column(db.String(32), db.ForeignKey('apiary.id'), nullable=False)
     apiary = db.relationship("Apiary", back_populates="beehives")
