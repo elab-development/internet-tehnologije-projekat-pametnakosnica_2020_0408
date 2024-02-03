@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import httpClient from '../httpClient'
 import { Button, Flex, FormControl, FormLabel, Heading, Input, useToast } from '@chakra-ui/react'
 import { Form, useNavigate } from 'react-router-dom'
@@ -11,6 +11,12 @@ const Login = () => {
     const navigate = useNavigate()
     const toast = useToast()
 
+    useEffect(() => {
+        if (token && token !== '' && token !== null) {
+          navigate('/dashboard');
+        }
+      }, [token, navigate]);
+
     const logInUser = async () =>{
         console.log(email, password);
 
@@ -22,7 +28,6 @@ const Login = () => {
        const headers = {
         
        }
-       console.log("RADI")
         try{
             const resp = await httpClient.post("//localhost:5000/auth/login", data, headers);
             if(resp.status === 200){
@@ -33,7 +38,6 @@ const Login = () => {
         }
         catch (error: any) {
             if(error.response.status === 401){
-                //alert("Invalid credentials")
                 toast({
                     title: 'Bad credentials',
                     status: 'error',
@@ -48,12 +52,6 @@ const Login = () => {
 
   return (
     <Flex p="10px" mb="60px" flexDirection="column" alignItems="center">
-    {token && token !== "" && token !== null ? (
-        <>
-        <Heading as="h2">You are already logged in!</Heading>
-        </>
-    ) : (
-        <>
         <Heading as="h2">Login</Heading>
         <Form>
             <FormControl>
@@ -68,8 +66,6 @@ const Login = () => {
             Login
             </Button>
         </Form>
-        </>
-    )}
     </Flex>
   )
 }
