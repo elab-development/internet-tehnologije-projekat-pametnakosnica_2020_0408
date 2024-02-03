@@ -1,11 +1,9 @@
-import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
 import { Flex, Heading } from "@chakra-ui/react";
 
 
 const LandingPage = () => {
 
-    const {token, } = useContext(UserContext)
+    //const {token, } = useContext(UserContext)
   
     return (
     <Flex p="10px" mb="60px" flexDirection="column" alignItems="center">
