@@ -13,42 +13,21 @@ import httpClient from "../httpClient"
 import { useNavigate } from "react-router-dom"
 
 export default function Navbar() {
-  //const toast = useToast()
   const {user, setUser} = useContext(UserContext)
   const navigate = useNavigate()
 
-  // useEffect(()=>{
-  //   async function func(){
-    
-  //     try{
-  //       const resp = await httpClient.get("//localhost:5000/auth/@me", {
-  //         headers:{
-  //           "Content-Type": "application/json",
-  //           Authorization: "Bearer " + token,
-  //         }
-  //       });
-  //       if (resp.status !== 200) {
-  //           console.log(resp)
-  //       }
-  //       setUsername(resp.data["username"])
-  //     } catch (error) {
-  //       console.error("Error fetching user:", error);
-  //     }
-
-
-  //   }
-  //   func()
-  // }, [])
-
-
   const logoutUser = async () =>{
       localStorage.removeItem('jwt_token')
-      await httpClient.delete("//localhost:5000/auth/logout", {
-        headers:{
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + user.token,
-        }
-      });
+      try{
+        await httpClient.delete("//localhost:5000/auth/logout", {
+          headers:{
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + user.token,
+          }
+        });
+      }catch (error){
+        console.log(error)
+      }
       setUser({
         token: null,
         username: null,
@@ -73,8 +52,8 @@ export default function Navbar() {
         </>
       ) : (   
         <>    
-          <Button onClick={()=> window.location.href = 'login'}>Login</Button>
-          <Link fontWeight='bold' href="register">Register</Link>
+          <Button onClick={()=> window.location.href = '/login'}>Login</Button>
+          <Link fontWeight='bold' onClick={()=> window.location.href = '/register'}>Register</Link>
         </>
       )}
     </HStack>

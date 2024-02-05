@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import BeehiveDash from './pages/BeehiveDash'
+import BeehiveStats from './components/BeehiveStats'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -14,6 +15,7 @@ const router = createBrowserRouter(
       <Route path='register' element={<Register/>}/>
       <Route path='dashboard' element={<Dashboard/>}/>
       <Route path='beehivedash/:apiaryId' element={<BeehiveDash/>}/>
+      <Route path='beehivedash/:apiaryId/beehivestats/:beehiveId' element={<BeehiveStats/>}/>
     </Route>
   )
 )

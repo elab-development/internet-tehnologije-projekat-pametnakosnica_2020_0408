@@ -20,25 +20,20 @@ def create_apiary():
     user_id = '1bb0bd51c27b4fe3bfc74a7647e35b48'
     user = User.query.get(user_id)
 
-    # Create a new Apiary instance
     new_apiary = Apiary(
         name='Caljinci',
         location='Svodje',
         user=user
     )
 
-    # Add the Apiary instance to the session
     db.session.add(new_apiary)
-
-    # Commit the changes to persist them in the database
     db.session.commit()
 
     return jsonify({"message": "Apiary added successfully."})
 
 @bp.route('/addMeasurement', methods=["POST"])
 def add_measurement():
-    # Retrieve the Apiary
-    apiary = Apiary.query.get("f6140f8236904a8ab13f783fcd5d0c78")
+    apiary = Apiary.query.get("f2904288959948c6ab094e650986950d")
 
     if not apiary:
         return jsonify({"message": "Apiary not found."}), 404
@@ -89,8 +84,6 @@ def get_last_measurements(page):
     last_measurements = (
         Apiary_Measurement.query
         .filter_by(apiary=apiary)
-        # # .filter(Apiary_Measurement.date >= last_24_hours)
-        # .order_by(Apiary_Measurement.date.desc())
         .limit(24)
         .all()
     )

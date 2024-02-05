@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import { Grid, GridItem } from "@chakra-ui/react"
-import Sidebar from "../components/Sidebar"
+//import Sidebar from "../components/Sidebar"
 
 const RootLayout = () => {
   return (
@@ -24,7 +24,7 @@ const RootLayout = () => {
         rowSpan={5} 
         p="40px"
       >
-        <Sidebar />
+        {/* <Sidebar /> */}
         <Outlet />
       </GridItem>
     </Grid>
