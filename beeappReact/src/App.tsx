@@ -6,6 +6,7 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import BeehiveDash from './pages/BeehiveDash'
 import BeehiveStats from './components/BeehiveStats'
+import Generic404 from './pages/Generic404'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -14,8 +15,9 @@ const router = createBrowserRouter(
       <Route path='login' element={<Login/>}/>
       <Route path='register' element={<Register/>}/>
       <Route path='dashboard' element={<Dashboard/>}/>
-      <Route path='beehivedash/:apiaryId' element={<BeehiveDash/>}/>
-      <Route path='beehivedash/:apiaryId/beehivestats/:beehiveId' element={<BeehiveStats/>}/>
+      <Route path='beehivedash/:apiaryId' element={<BeehiveDash/>} errorElement={<Generic404/>}/>
+      <Route path='beehivedash/:apiaryId/beehivestats/:beehiveId' element={<BeehiveStats/>} errorElement={<Generic404/>}/>
+      <Route path='*' element={<Generic404/>} />
     </Route>
   )
 )

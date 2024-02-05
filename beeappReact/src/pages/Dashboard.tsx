@@ -39,6 +39,8 @@ const Dashboard = () => {
     <Grid alignItems="center" justifyContent='center'>
       <GridItem>
       <Heading as="h3">Measurements in the {apiary && apiary["name"]} apiary in {apiary && apiary["location"]}</Heading>
+      {/* <Spacer/>
+      <Button>Change the apiary</Button> */}
       {apiaryMeasurements.length > 0 && (
         <ResponsiveContainer width="100%" height={300}>
           <LineChart

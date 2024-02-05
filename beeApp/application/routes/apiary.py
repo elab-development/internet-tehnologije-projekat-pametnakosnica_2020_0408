@@ -16,20 +16,31 @@ import math
 bp = Blueprint('apiary', __name__, url_prefix='/apiary')
 
 @bp.route('/create', methods=["POST"])
+@jwt_required()
 def create_apiary():
-    user_id = '1bb0bd51c27b4fe3bfc74a7647e35b48'
-    user = User.query.get(user_id)
+    user_email = get_jwt_identity()
+    user = User.query.filter_by(email=user_email).first()
+
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+
+    data = request.json
+    name = data.get("name")
+    location = data.get("location")
+
+    if not (name and location):
+        return jsonify({"message": "Name and location are required fields."}), 400
 
     new_apiary = Apiary(
-        name='Caljinci',
-        location='Svodje',
+        name=name,
+        location=location,
         user=user
     )
 
     db.session.add(new_apiary)
     db.session.commit()
 
-    return jsonify({"message": "Apiary added successfully."})
+    return jsonify({"message": "Apiary created successfully."}), 200
 
 @bp.route('/addMeasurement', methods=["POST"])
 def add_measurement():

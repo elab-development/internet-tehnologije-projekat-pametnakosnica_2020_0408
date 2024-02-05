@@ -1,6 +1,6 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Heading, SimpleGrid, Text } from "@chakra-ui/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Flex, FormControl, FormLabel, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Form, useNavigate, useParams } from "react-router-dom";
 import httpClient from "../httpClient";
 import { UserContext } from "../context/UserContext";
 import { Beehive } from "../models";
@@ -10,6 +10,12 @@ const Beehives = () => {
   const {user, } = useContext(UserContext)
   const [beehives, setBeehives] = useState<Beehive[]>([])
   const navigate = useNavigate()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [devicename, setDeviceName] = useState('')
+  const [beehivename, setBeehiveName] = useState('')
+  const handleDNameChange = (event: any) => setDeviceName(event.target.value)
+  const handleBNameChange = (event: any) => setBeehiveName(event.target.value)
+  const toast = useToast()
 
   useEffect(() => {
     async function func() {
@@ -30,9 +36,68 @@ const Beehives = () => {
     }
     func();
   }, []);
-  
+
+  const createBeehive = async () =>{
+    try{
+        const resp = await httpClient.post(`//localhost:5000/apiary/beehive/create/${apiaryId}`, {
+          "device": devicename,
+        "displayname": beehivename
+      }, {
+          headers:{
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + user.token,
+          }
+        });
+        if(resp.status === 200){
+            console.log(resp)
+            setBeehives((prevBeehives) => [
+              ...prevBeehives,
+              { device: devicename, displayname: beehivename, id: '' }, // Update with the actual data if provided by the backend
+            ]);
+        }else{
+          toast({
+            title: resp.statusText,
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+            position: 'top'
+          })
+        }
+    }
+    catch (error: any) {
+      console.log(error)
+    }
+  }
   
   return (
+    <><Button onClick={onOpen}>Create new beehive</Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create new apiary</ModalHeader>
+          <ModalCloseButton/>
+          <ModalBody>
+          <Flex p="10px" mb="10px" flexDirection="column" alignItems="center">
+                <Form>
+                    <FormControl>
+                    <FormLabel>Controller name</FormLabel>
+                    <Input type="text" onChange={handleDNameChange}/>
+                    </FormControl>
+                    <FormControl>
+                    <FormLabel>Beehive name</FormLabel>
+                    <Input type="text" onChange={handleBNameChange}/>
+                    </FormControl>
+                </Form>
+            </Flex>
+          </ModalBody>
+          <ModalFooter justifyContent='center'>
+            <Button colorScheme='blue' mr={3} onClick={()=> {onClose(); createBeehive();}}>
+              Create beehive
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
     <SimpleGrid spacing={4} templateColumns='repeat(auto-fill, minmax(200px, 1fr))'>
       {beehives.map((beehive, index) => (
         <Card key={beehive.id}>
@@ -41,14 +106,14 @@ const Beehives = () => {
           </CardHeader>
           <CardBody>
             <Text>Device: {beehive.device}</Text>
-            <Text>ID: {index+1}</Text>
+            <Text>ID: {index + 1}</Text>
           </CardBody>
           <CardFooter>
-          <Button onClick={() => navigate(`beehivestats/${index+1}`)}>Check stats</Button>
+            <Button onClick={() => navigate(`beehivestats/${index + 1}`)}>Check stats</Button>
           </CardFooter>
         </Card>
       ))}
-    </SimpleGrid>
+    </SimpleGrid></>
   );
 };
 export default Beehives

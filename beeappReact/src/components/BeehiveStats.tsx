@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, Bar, BarChart, Legend } from 'recharts';
+import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, Bar, BarChart } from 'recharts';
 import httpClient from '../httpClient';
 import { UserContext } from '../context/UserContext';
 import { Button, Grid, GridItem, Heading } from '@chakra-ui/react';
