@@ -15,22 +15,34 @@ import math
 
 bp = Blueprint('beehive', __name__, url_prefix='/apiary/beehive')
 
-@bp.route('/create', methods=["POST"])
-def create_apiary():
-    apiary_id = 'f2904288959948c6ab094e650986950d'
-    apiary = Apiary.query.get(apiary_id)
+@bp.route('/create/<page>', methods=["POST"])
+@jwt_required()
+def create_apiary(page):
+    try:
+        page = int(page)
+    except ValueError:
+        return jsonify({"message": "Invalid apiary."}), 400
+    
+    user_email = get_jwt_identity()
+    user = User.query.filter_by(email=user_email).first()
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    apiary = Apiary.query.filter_by(user=user).offset(page - 1).limit(1).first()
 
-    # Create a new Apiary instance
+    device = request.json['device']
+    displayname = request.json['displayname']
+
+    if not (device and displayname):
+        return jsonify({"message": "Names of the device and beehive are required fields."}), 400
+
     new_beehive = Beehive(
-        device='ESP32',
-        displayname='B4',
+        device=device,
+        displayname=displayname,
         apiary=apiary
     )
 
-    # Add the Apiary instance to the session
     db.session.add(new_beehive)
-
-    # Commit the changes to persist them in the database
     db.session.commit()
 
     return jsonify({"message": "Beehive added successfully."})
@@ -74,7 +86,7 @@ def get_beehives(page):
     try:
         page = int(page)
     except ValueError:
-        return jsonify({"message": "Invalid page number."}), 400
+        return jsonify({"message": "Invalid apiary."}), 400
     
     user_email = get_jwt_identity()
     user = User.query.filter_by(email=user_email).first()
