@@ -119,3 +119,37 @@ def get_last_measurements(page):
         "apiary": apiary_data,
         "measurements": measurements_data
     }), 200
+    
+@bp.route('/edit/<apiary>', methods=["PUT"])
+@jwt_required()
+def edit_apiary(apiary):
+    if apiary:
+        try:
+            apiary = int(apiary)
+        except ValueError:
+            return jsonify({"message": "Invalid page number."}), 400
+    else: return jsonify({"message": "Invalid page number."}), 400
+    
+    new_name = request.json['name']
+    new_location = request.json['location']
+    
+    if not (new_name and new_location):
+        return jsonify({"message": "Device and display name are required fields."}), 400
+    
+    user_email = get_jwt_identity()
+
+    user = User.query.filter_by(email=user_email).first()
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    apiary = Apiary.query.filter_by(user=user).offset(apiary - 1).limit(1).first()
+    if not apiary:
+        apiary = Apiary.query.first()
+        return jsonify({"message": "No more data available.", "status": 204}), 204
+
+    apiary.name = new_name
+    apiary.location = new_location
+    
+    db.session.commit()
+    
+    return jsonify({"message": "Beehive updated successfully."}), 200

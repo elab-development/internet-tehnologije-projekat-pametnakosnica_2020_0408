@@ -52,7 +52,7 @@ const Beehives = () => {
             console.log(resp)
             setBeehives((prevBeehives) => [
               ...prevBeehives,
-              { device: devicename, displayname: beehivename, id: '' }, // Update with the actual data if provided by the backend
+              { device: devicename, displayname: beehivename, id: '' },
             ]);
         }else{
           toast({
@@ -74,7 +74,7 @@ const Beehives = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create new apiary</ModalHeader>
+          <ModalHeader>Create new beehive</ModalHeader>
           <ModalCloseButton/>
           <ModalBody>
           <Flex p="10px" mb="10px" flexDirection="column" alignItems="center">
