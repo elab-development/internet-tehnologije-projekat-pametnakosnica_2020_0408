@@ -6,8 +6,14 @@ export interface User {
     lastname: string;
   }
 
-export  interface Beehive {
+export interface Beehive {
     id: string;
     device: string;
     displayname: string;
+  }
+
+  export interface Apiary {
+    id: string;
+    name: string;
+    location: string;
   }

@@ -102,7 +102,6 @@ def get_beehives(page):
     
     beehives_data = [
         {
-            "id": beehive.id,
             "device": beehive.device,
             "displayname": beehive.displayname
         }
@@ -125,7 +124,7 @@ def get_beehive_measurements(apiary, beehive):
     else: return jsonify({"message": "Invalid page number."}), 400
     
     user_email = get_jwt_identity()
-    print(user_email)
+
     user = User.query.filter_by(email=user_email).first()
     if not user:
         return jsonify({"message": "User not found."}), 404
@@ -134,9 +133,9 @@ def get_beehive_measurements(apiary, beehive):
     if not apiary:
         apiary = Apiary.query.first()
         return jsonify({"message": "No more data available.", "status": 204}), 204
-    print(apiary.id)
+
     beehive = Beehive.query.filter_by(apiary=apiary).offset(beehive - 1).limit(1).first()
-    print(beehive.id)
+
     last_measurements = (
         Beehive_Measurement.query
         .filter_by(beehive=beehive)
@@ -156,13 +155,48 @@ def get_beehive_measurements(apiary, beehive):
         }
         for m in last_measurements
     ]
-
-    print("????????????????????????????? "+str(len(beehives_data)))
     
     return jsonify({
         "beehive": {
-            "device": beehive.device,
-            "displayname": beehive.displayname
+            "displayname": beehive.displayname,
+            "device": beehive.device
             },
         "beehive_measurements": beehives_data
     }), 200
+    
+@bp.route('/edit/<apiary>/<beehive>', methods=["PUT"])
+@jwt_required()
+def edit_beehive(apiary, beehive):
+    if apiary and beehive:
+        try:
+            apiary = int(apiary)
+            beehive = int(beehive)
+        except ValueError:
+            return jsonify({"message": "Invalid page number."}), 400
+    else: return jsonify({"message": "Invalid page number."}), 400
+    
+    new_device = request.json['device']
+    new_displayname = request.json['displayname']
+    
+    if not (new_device and new_displayname):
+        return jsonify({"message": "Device and display name are required fields."}), 400
+    
+    user_email = get_jwt_identity()
+
+    user = User.query.filter_by(email=user_email).first()
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    apiary = Apiary.query.filter_by(user=user).offset(apiary - 1).limit(1).first()
+    if not apiary:
+        apiary = Apiary.query.first()
+        return jsonify({"message": "No more data available.", "status": 204}), 204
+
+    beehive = Beehive.query.filter_by(apiary=apiary).offset(beehive - 1).limit(1).first()
+    
+    beehive.device = new_device
+    beehive.displayname = new_displayname
+    
+    db.session.commit()
+    
+    return jsonify({"message": "Beehive updated successfully."}), 200
