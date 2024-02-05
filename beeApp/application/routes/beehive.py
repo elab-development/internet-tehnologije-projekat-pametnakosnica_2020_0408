@@ -35,14 +35,13 @@ def create_apiary():
 
     return jsonify({"message": "Beehive added successfully."})
 
-@bp.route('/addMeasurement', methods=["POST"])
+@bp.route('/add_measurement', methods=["POST"])
 def add_measurement():
-    beehive = Beehive.query.get("028d8710e93247e996a24c56dcbe1f8b")
+    beehive = Beehive.query.get("b3fa6c64850a44cf919862de6e53103d")
 
     if not beehive:
         return jsonify({"message": "Beehive not found."}), 404
 
-    spring_start_date = datetime(2023, 3, 1, 0, 0, 0)
     current_time = datetime.utcnow()  # Current UTC time
     beehive_measurements = []
     for i in range(50):
@@ -60,7 +59,7 @@ def add_measurement():
             air_pressure=air_pressure,
             weight=weight,
             food_remaining=food_remaining,
-            beehive_id="your_beehive_id"  # Replace with the actual beehive ID
+            beehive=beehive
         )
         beehive_measurements.append(measurement)
             
@@ -70,13 +69,19 @@ def add_measurement():
     return jsonify({"message": "Beehive measurements added successfully."})
 
 @bp.route('/get_beehives/<page>', methods=["GET"])
+@jwt_required()
 def get_beehives(page):
     try:
         page = int(page)
     except ValueError:
         return jsonify({"message": "Invalid page number."}), 400
     
-    apiary = Apiary.query.offset(page - 1).limit(1).first()
+    user_email = get_jwt_identity()
+    user = User.query.filter_by(email=user_email).first()
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    apiary = Apiary.query.filter_by(user=user).offset(page - 1).limit(1).first()
     beehives = (
         Beehive.query
         .filter_by(apiary=apiary)
@@ -94,4 +99,58 @@ def get_beehives(page):
 
     return jsonify({
         "beehives": beehives_data
+    }), 200
+    
+@bp.route('/get_measurements/<apiary>/<beehive>', methods=["GET"])
+@jwt_required()
+def get_beehive_measurements(apiary, beehive):
+    if apiary and beehive:
+        try:
+            apiary = int(apiary)
+            beehive = int(beehive)
+        except ValueError:
+            return jsonify({"message": "Invalid page number."}), 400
+    else: return jsonify({"message": "Invalid page number."}), 400
+    
+    user_email = get_jwt_identity()
+    print(user_email)
+    user = User.query.filter_by(email=user_email).first()
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    apiary = Apiary.query.filter_by(user=user).offset(apiary - 1).limit(1).first()
+    if not apiary:
+        apiary = Apiary.query.first()
+        return jsonify({"message": "No more data available.", "status": 204}), 204
+    print(apiary.id)
+    beehive = Beehive.query.filter_by(apiary=apiary).offset(beehive - 1).limit(1).first()
+    print(beehive.id)
+    last_measurements = (
+        Beehive_Measurement.query
+        .filter_by(beehive=beehive)
+        .limit(24)
+        .all()
+    )
+    
+    beehives_data = [
+        {
+            "id": m.id,
+            "date": m.date.strftime('%H:%M'),
+            "temperature": round(float(m.temperature), 2),
+            "humidity": round(float(m.humidity), 2),
+            "air_pressure": round(float(m.air_pressure), 2),
+            "weight": round(float(m.weight), 2),
+            "food_remaining": round(float(m.food_remaining), 2)
+        }
+        for m in last_measurements
+    ]
+
+    print("????????????????????????????? "+str(len(beehives_data)))
+    
+    return jsonify({
+        "beehive": {
+            "device": beehive.device,
+            "displayname": beehive.displayname
+            },
+        "beehive_measurements": beehives_data
     }), 200

@@ -65,7 +65,6 @@ const Dashboard = () => {
         <Spacer/>
         <Button onClick={()=> setCurrentPage(currentPage+1)}>Next</Button>
         </HStack>
-
       </GridItem>
     </Grid>
   );
