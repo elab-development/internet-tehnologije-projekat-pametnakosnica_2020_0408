@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Flex, FormControl, FormLabel, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, Text, useDisclosure, useToast } from "@chakra-ui/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Flex, FormControl, FormLabel, HStack, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { Form, useNavigate, useParams } from "react-router-dom";
 import httpClient from "../httpClient";
@@ -70,7 +70,11 @@ const Beehives = () => {
   }
   
   return (
-    <><Button onClick={onOpen}>Create new beehive</Button>
+    <>
+    <HStack>
+      <Button onClick={() => navigate(`/dashboard`)}>Back</Button>
+      <Button onClick={onOpen}>Create new beehive</Button>
+    </HStack>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

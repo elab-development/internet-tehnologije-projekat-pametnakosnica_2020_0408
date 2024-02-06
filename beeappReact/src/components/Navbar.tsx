@@ -67,6 +67,13 @@ export default function Navbar() {
         });
         if(resp.status === 200){
             console.log(resp)
+            toast({
+              title: 'Apiary created successfully.',
+              status: 'success',
+              duration: 3000,
+              isClosable: true,
+              position: 'top'
+            })
         }else{
           toast({
             title: resp.statusText,
