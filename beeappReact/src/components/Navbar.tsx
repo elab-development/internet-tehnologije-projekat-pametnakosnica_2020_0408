@@ -18,14 +18,19 @@ import {
   FormLabel,
   Input,
   useToast,
+  CircularProgress,
+  Image,
 } from "@chakra-ui/react"
 import { useContext, useState } from "react"
 import { UserContext } from '../context/UserContext'
 import httpClient from "../httpClient"
 import { Form, useNavigate } from "react-router-dom"
+import logo from '../assets/logo.png'
+import CustomButton from "./CustomButton"
 
 export default function Navbar() {
   const {user, setUser} = useContext(UserContext)
+  const {loading, } = useContext(UserContext)
   const navigate = useNavigate()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [apiaryName, setApiaryName] = useState('')
@@ -89,54 +94,79 @@ export default function Navbar() {
     }
   }
 
+  const flexStyles = {
+    p: "30px",
+    alignItems: "center",
+    justifyContent: 'center',
+    background: "#ffbd21"
+  }
+
+  const buttonStyles = {
+    bg: '#352f31',
+    color:'wheat',
+    _hover: {bg:'#ffd77a'}
+  }
 
   return (
-    <Flex as="nav" p="10px" mb="60px" alignItems="center" justifyContent='center'>
-    <Heading as="h1" fontSize="1.5em">Bee Smart</Heading>
+    <Flex sx={flexStyles} as="nav">
+      <HStack>
+        <Image src={logo} />
+        <Heading as="h1" fontSize="1.5em">Bee Smart</Heading>
+      </HStack>
+      <Spacer />  
+      <HStack spacing="20px">
+        {loading ? (
+          <CircularProgress isIndeterminate color='green.300' thickness='12px'/>
+        ) : (
+          <>
+            {user.token && user.token !== null ? (
+  <>
+    <Heading>Welcome {user.username}</Heading>
     <Spacer />
-    <HStack spacing="20px">
-      {user.token && user.token !== "" && user.token !== null ? (
-        <>
-          <Button onClick={() => navigate('../dashboard')}>Apiary Dashboard</Button>
-          <Button onClick={onOpen}>Create new apiary</Button>
-          <Spacer/>
-          <Text>{user.username}</Text>
-          <Button onClick={() => logoutUser()}>Logout</Button>
-
-          <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Create new apiary</ModalHeader>
-              <ModalCloseButton/>
-              <ModalBody>
-              <Flex p="10px" mb="10px" flexDirection="column" alignItems="center">
-                    <Form>
-                        <FormControl>
-                        <FormLabel>Name</FormLabel>
-                        <Input type="text" onChange={handleNameChange}/>
-                        </FormControl>
-                        <FormControl>
-                        <FormLabel>Location</FormLabel>
-                        <Input type="text" onChange={handleLocationChange}/>
-                        </FormControl>
-                    </Form>
-                </Flex>
-              </ModalBody>
-              <ModalFooter justifyContent='center'>
-                <Button colorScheme='blue' mr={3} onClick={()=> {onClose(); createApiary();}}>
-                  Create
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-        </>
-      ) : (   
-        <>    
-          <Button onClick={()=> window.location.href = '/login'}>Login</Button>
-          <Link fontWeight='bold' onClick={()=> window.location.href = '/register'}>Register</Link>
-        </>
-      )}
+    <HStack>
+      <Button sx={buttonStyles} onClick={() => navigate('../dashboard')}>Apiary Dashboard</Button>
+      <Button sx={buttonStyles} onClick={onOpen}>Create new apiary</Button>
     </HStack>
-  </Flex>
+    <Spacer />
+    <Button sx={buttonStyles} onClick={() => logoutUser()}>Logout</Button>
+
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Create new apiary</ModalHeader>
+        <ModalCloseButton/>
+        <ModalBody>
+          <Flex p="10px" mb="10px" flexDirection="column" alignItems="center">
+            <Form>
+              <FormControl>
+                <FormLabel>Name</FormLabel>
+                <Input type="text" onChange={handleNameChange}/>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Location</FormLabel>
+                <Input type="text" onChange={handleLocationChange}/>
+              </FormControl>
+            </Form>
+          </Flex>
+        </ModalBody>
+        <ModalFooter justifyContent='center'>
+          <Button colorScheme='blue' mr={3} onClick={()=> {onClose(); createApiary();}}>
+            Create
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  </>
+) : (   
+  <>    
+    <Button onClick={()=> window.location.href = '/login'}>Login</Button>
+    <Link fontWeight='bold' onClick={()=> window.location.href = '/register'}>Register</Link>
+  </>
+)}
+
+          </>
+        )}
+      </HStack>
+    </Flex>
   )
 }

@@ -174,6 +174,6 @@ def delete_apiary(apiary):
     if apiary:
         db.session.delete(apiary)
         db.session.commit()
-        return jsonify({"message": "Beehive deleted successfully"}), 200
+        return jsonify({"message": "Apiary deleted successfully"}), 200
     else:
-        return jsonify({"message": "Beehive not found"}), 404
+        return jsonify({"message": "Apiary not found"}), 404
