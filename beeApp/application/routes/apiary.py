@@ -134,7 +134,7 @@ def edit_apiary(apiary):
     new_location = request.json['location']
     
     if not (new_name and new_location):
-        return jsonify({"message": "Device and display name are required fields."}), 400
+        return jsonify({"message": "Name and location are required fields."}), 400
     
     user_email = get_jwt_identity()
 
@@ -152,4 +152,28 @@ def edit_apiary(apiary):
     
     db.session.commit()
     
-    return jsonify({"message": "Beehive updated successfully."}), 200
+    return jsonify({"message": "Apiary updated successfully."}), 200
+
+@bp.route('/delete/<apiary>', methods=["DELETE"])
+@jwt_required()
+def delete_apiary(apiary):
+    if apiary:
+        try:
+            apiary = int(apiary)
+        except ValueError:
+            return jsonify({"message": "Invalid page number."}), 400
+    else: return jsonify({"message": "Invalid page number."}), 400
+    
+    user_email = get_jwt_identity()
+
+    user = User.query.filter_by(email=user_email).first()
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    apiary = Apiary.query.filter_by(user=user).offset(apiary - 1).limit(1).first()   
+    if apiary:
+        db.session.delete(apiary)
+        db.session.commit()
+        return jsonify({"message": "Beehive deleted successfully"}), 200
+    else:
+        return jsonify({"message": "Beehive not found"}), 404

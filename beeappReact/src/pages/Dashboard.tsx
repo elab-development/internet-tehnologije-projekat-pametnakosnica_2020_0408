@@ -9,7 +9,7 @@ import { Apiary } from '../models';
 const Dashboard = () => {
   const [apiaryMeasurements, setApiaryMeasurements] = useState([]);
   const [apiary, setApiary] = useState<Apiary>();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentApiary, setCurrentApiary] = useState(1);
   const {user, } = useContext(UserContext)
   const navigate = useNavigate()
   const [name, setName] = useState('')
@@ -22,7 +22,7 @@ const Dashboard = () => {
   useEffect(() => {
     async function func() {
       try {
-        const resp = await httpClient.get(`//localhost:5000/apiary/get_measurements/${currentPage}`, {
+        const resp = await httpClient.get(`//localhost:5000/apiary/get_measurements/${currentApiary}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + user.token,
@@ -33,18 +33,18 @@ const Dashboard = () => {
           setApiaryMeasurements(resp.data["measurements"]);
           setApiary(resp.data["apiary"]);
         } else if (resp.status === 204) {
-          setCurrentPage(1);
+          setCurrentApiary(1);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     }
     func();
-  }, [currentPage]);
+  }, [currentApiary]);
 
   const editApiary = async () =>{
     try{
-        const resp = await httpClient.put(`//localhost:5000/apiary/edit/${currentPage}`, {
+        const resp = await httpClient.put(`//localhost:5000/apiary/edit/${currentApiary}`, {
           "name": name,
         "location": location
       }, {
@@ -78,13 +78,45 @@ const Dashboard = () => {
     }
   }
 
+  const deleteApiary = async () => {
+    try{
+      const resp = await httpClient.delete(`//localhost:5000/apiary/delete/${currentApiary}`, {
+        headers:{
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + user.token,
+        }
+      });
+      if(resp.status === 200){
+          setCurrentApiary(1);
+          toast({
+            title: 'Apiary successfully deleted.',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+            position: 'top'
+          })
+      }else{
+        toast({
+          title: 'Error deleting the apiary.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+          position: 'top'
+        })
+      }
+  }
+  catch (error: any) {
+    console.log(error)
+  }
+  }
+
   return (
     <Grid alignItems="center" justifyContent='center'>
       <GridItem>
       <Heading as="h3">Measurements in the {apiary && apiary["name"]} apiary in {apiary && apiary["location"]}</Heading>
       {/* <Spacer/>
       <Button>Change the apiary</Button> */}
-      {apiaryMeasurements.length > 0 && (
+      {apiaryMeasurements.length > 0 ? (
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
             data={apiaryMeasurements}
@@ -100,13 +132,15 @@ const Dashboard = () => {
             {/* Add more lines for other measurements if needed */}
           </LineChart>
         </ResponsiveContainer>
+      ) : (
+        <Heading margin='10px'>No data</Heading>
       )}
       </GridItem>
       <GridItem alignItems="center" justifyContent='center'>
         <HStack>
-        <Button onClick={()=> {if (currentPage > 1) {setCurrentPage(currentPage-1)}}}>Previous</Button>
+        <Button onClick={()=> {if (currentApiary > 1) {setCurrentApiary(currentApiary-1)}}}>Previous</Button>
         <Spacer/>
-        <Button onClick={()=> navigate(`/beehivedash/${currentPage}`)}>Check Beehives</Button>
+        <Button onClick={()=> navigate(`/beehivedash/${currentApiary}`)}>Check Beehives</Button>
         <Button onClick={onOpen}>Edit apiary</Button>
         <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
@@ -128,6 +162,7 @@ const Dashboard = () => {
                   </Flex>
                 </ModalBody>
                 <ModalFooter justifyContent='center'>
+                  <Button colorScheme='red' mr={3} onClick={()=> {onClose(); deleteApiary()}}>Delete apiary</Button>
                   <Button colorScheme='blue' mr={3} onClick={()=> {onClose(); editApiary()}}>
                     Save changes
                   </Button>
@@ -136,7 +171,7 @@ const Dashboard = () => {
               </ModalContent>
             </Modal>
         <Spacer/>
-        <Button onClick={()=> setCurrentPage(currentPage+1)}>Next</Button>
+        <Button onClick={()=> setCurrentApiary(currentApiary+1)}>Next</Button>
         </HStack>
       </GridItem>
     </Grid>

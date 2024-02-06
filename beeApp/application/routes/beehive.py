@@ -190,7 +190,7 @@ def edit_beehive(apiary, beehive):
     apiary = Apiary.query.filter_by(user=user).offset(apiary - 1).limit(1).first()
     if not apiary:
         apiary = Apiary.query.first()
-        return jsonify({"message": "No more data available.", "status": 204}), 204
+        return jsonify({"message": "No more data available."}), 204
 
     beehive = Beehive.query.filter_by(apiary=apiary).offset(beehive - 1).limit(1).first()
     
@@ -200,3 +200,34 @@ def edit_beehive(apiary, beehive):
     db.session.commit()
     
     return jsonify({"message": "Beehive updated successfully."}), 200
+
+@bp.route('/delete/<apiary>/<beehive>', methods=["DELETE"])
+@jwt_required()
+def delete_beehive(apiary, beehive):
+    if apiary and beehive:
+        try:
+            apiary = int(apiary)
+            beehive = int(beehive)
+        except ValueError:
+            return jsonify({"message": "Invalid page number."}), 400
+    else: return jsonify({"message": "Invalid page number."}), 400
+    
+    user_email = get_jwt_identity()
+
+    user = User.query.filter_by(email=user_email).first()
+    if not user:
+        return jsonify({"message": "User not found."}), 404
+    
+    apiary = Apiary.query.filter_by(user=user).offset(apiary - 1).limit(1).first()
+    if not apiary:
+        apiary = Apiary.query.first()
+        return jsonify({"message": "No more data available."}), 204
+
+    beehive = Beehive.query.filter_by(apiary=apiary).offset(beehive - 1).limit(1).first()
+    
+    if beehive:
+        db.session.delete(beehive)
+        db.session.commit()
+        return jsonify({"message": "Beehive deleted successfully"}), 200
+    else:
+        return jsonify({"message": "Beehive not found"}), 404

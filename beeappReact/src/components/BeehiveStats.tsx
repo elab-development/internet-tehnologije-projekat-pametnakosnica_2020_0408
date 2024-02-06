@@ -80,42 +80,42 @@ const BeehiveStats = () => {
     }
   }
 
+  const deleteBeehive = async () => {
+    try{
+        const resp = await httpClient.delete(`//localhost:5000/apiary/beehive/delete/${apiaryId}/${beehiveId}`, {
+          headers:{
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + user.token,
+          }
+        });
+        if(resp.status === 200){
+            toast({
+              title: 'Beehive successfully deleted.',
+              status: 'success',
+              duration: 3000,
+              isClosable: true,
+              position: 'top'
+            })
+        }else{
+          toast({
+            title: 'Error deleting a beehive.',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+            position: 'top'
+          })
+        }
+    }
+    catch (error: any) {
+      console.log(error)
+    }
+  }
+
   return (
     <>
       {beehiveMeasurements.length > 0 ? (
         <>
-          <HStack>
-            <Heading as="h3">Measurements in the {beehive && beehive.displayname}</Heading>
-            <Button onClick={onOpen}>Edit beehive</Button>
-            <Modal isOpen={isOpen} onClose={onClose}>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Edit beehive {beehive && beehive["displayname"]}</ModalHeader>
-                <ModalCloseButton/>
-                <ModalBody>
-                <Flex p="10px" mb="10px" flexDirection="column" alignItems="center">
-                      <Form>
-                          <FormControl>
-                          <FormLabel>Beehive name</FormLabel>
-                          <Input type="text" placeholder={beehive && beehive["displayname"]} onChange={handleBNameChange}/>
-                          </FormControl>
-                          <FormControl>
-                          <FormLabel>Controller model</FormLabel>
-                          <Input type="text" placeholder={beehive && beehive["device"]} onChange={handleDNameChange}/>
-                          </FormControl>
-                      </Form>
-                  </Flex>
-                </ModalBody>
-                <ModalFooter justifyContent='center'>
-                  <Button colorScheme='red' mr={3} onClick={()=> {onClose(); editBeehive()}}>Delete</Button>
-                  <Button colorScheme='blue' mr={3} onClick={()=> {onClose(); editBeehive()}}>
-                    Save changes
-                  </Button>
-                  <Button onClick={onClose}>Cancel</Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-          </HStack>
+          <Heading as="h3">Measurements in the {beehive && beehive.displayname}</Heading>
           <Grid templateColumns="repeat(3, 1fr)">
             <GridItem>
               <ResponsiveContainer width="100%" height={300}>
@@ -157,7 +157,36 @@ const BeehiveStats = () => {
       ) : (
         <Heading>No data</Heading>
       )}
-      <Button onClick={() => navigate(`/beehivedash/${apiaryId}`)}>Back</Button>
+      <HStack>
+            <Button onClick={() => navigate(`/beehivedash/${apiaryId}`)}>Back</Button>
+            <Button onClick={onOpen}>Edit beehive</Button>
+            <Modal isOpen={isOpen} onClose={onClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Edit beehive {beehive && beehive["displayname"]}</ModalHeader>
+                <ModalCloseButton/>
+                <ModalBody>
+                <Flex p="10px" mb="10px" flexDirection="column" alignItems="center">
+                      <Form>
+                          <FormControl>
+                          <FormLabel>Beehive name</FormLabel>
+                          <Input type="text" placeholder={beehive && beehive["displayname"]} onChange={handleBNameChange}/>
+                          </FormControl>
+                          <FormControl>
+                          <FormLabel>Controller model</FormLabel>
+                          <Input type="text" placeholder={beehive && beehive["device"]} onChange={handleDNameChange}/>
+                          </FormControl>
+                      </Form>
+                  </Flex>
+                </ModalBody>
+                <ModalFooter justifyContent='center'>
+                  <Button colorScheme='red' mr={3} onClick={()=> {onClose(); deleteBeehive(); navigate(`/beehivedash/${apiaryId}`);}}>Delete</Button>
+                  <Button colorScheme='blue' mr={3} onClick={()=> {onClose(); editBeehive()}}>Save changes</Button>
+                  <Button onClick={onClose}>Cancel</Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </HStack>
     </>
   );
   
