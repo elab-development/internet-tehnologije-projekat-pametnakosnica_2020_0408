@@ -5,7 +5,7 @@ import httpClient from "../httpClient";
 import { UserContext } from "../context/UserContext";
 import { Beehive } from "../models";
 import inside1 from "../assets/inside1.jpg"
-import { buttonStyles, cardStyles } from "../utils/themes";
+import { buttonStyles, cardStyles, modalStyles } from "../utils/themes";
 import { FaTemperatureLow, FaMicrochip } from "react-icons/fa6";
 import { GiSlicedBread, GiWeight } from "react-icons/gi";
 import { WiHumidity } from "react-icons/wi";
@@ -118,7 +118,7 @@ const Beehives = () => {
           <Button sx={buttonStyles} onClick={onOpen}>Create new beehive</Button>
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
-            <ModalContent>
+            <ModalContent sx={modalStyles}>
               <ModalHeader>Create new beehive</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
@@ -150,13 +150,14 @@ const Beehives = () => {
         </GridItem>
       ) : (
         <GridItem rowSpan={6}>
-        <Flex sx={{ backgroundColor: 'rgba(255, 189, 33, 0.7)',
+        <Flex sx={{ backgroundColor: 'rgba(255, 189, 33, 0.4)',
         padding: '5vmin',
         borderRadius: "15px",
         direction: "row",
         flexWrap: "wrap",
         justifyContent: "center",
-        gap: 5
+        gap: 5,
+        width: "90vw"
         }}>
           {beehives.map((beehive, index) => (
             <Card sx={cardStyles} key={beehive.id}>
@@ -173,7 +174,7 @@ const Beehives = () => {
                     </GridItem>
                     <GridItem colSpan={1}>
                     <HStack justifyContent="center" alignItems="center">
-                        <FaTemperatureLow color="red" size='1.2em'/>
+                        <FaTemperatureLow color="#fc1a0a" size='1.2em'/>
                         <Text>{beehive.temperature ? `${beehive.temperature}°C` : 'N/A'}</Text>
                     </HStack>
                     </GridItem>

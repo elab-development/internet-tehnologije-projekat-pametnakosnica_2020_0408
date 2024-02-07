@@ -5,13 +5,13 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import RootLayout from './pages/RootLayout';
 import LandingPage from './pages/LandingPage';
 import Register from './pages/Register';
-import BeehiveDash from './pages/BeehiveDash';
-import BeehiveStats from './components/BeehiveStats';
+import BeehivesDash from './pages/BeehivesDash';
 import Generic404 from './pages/Generic404';
 import UserProvider from './context/UserContext';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import { theme } from './utils/themes';
+import BeehiveStatsPage from './pages/BeehiveStatsPage';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,8 +20,8 @@ const router = createBrowserRouter(
       <Route path='login' element={<LoginPage/>}/>
       <Route path='register' element={<Register/>}/>
       <Route path='dashboard' element={<DashboardPage/>}/>
-      <Route path='beehivedash/:apiaryId' element={<BeehiveDash/>} errorElement={<Generic404/>}/>
-      <Route path='beehivedash/:apiaryId/beehivestats/:beehiveId' element={<BeehiveStats/>} errorElement={<Generic404/>}/>
+      <Route path='beehivedash/:apiaryId' element={<BeehivesDash/>} errorElement={<Generic404/>}/>
+      <Route path='beehivedash/:apiaryId/beehivestats/:beehiveId' element={<BeehiveStatsPage/>} errorElement={<Generic404/>}/>
       <Route path='*' element={<Generic404/>} />
     </Route>
   )

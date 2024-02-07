@@ -18,8 +18,8 @@ export interface Beehive {
     food_remaining?: string
   }
 
-  export interface Apiary {
-    id: string;
-    name: string;
-    location: string;
-  }
+export interface Apiary {
+  id: string;
+  name: string;
+  location: string;
+}

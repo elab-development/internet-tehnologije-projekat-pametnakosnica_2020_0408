@@ -1,16 +1,16 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import Beehives from "../components/Beehives";
 import { UserContext } from "../context/UserContext";
+import BeehiveStats from "../components/BeehiveStats";
 
-const BeehiveDash = () => {
+const BeehiveStatsPage = () => {
   const {user } = useContext(UserContext)
   const navigate = useNavigate()
   
   return (
     <>
-    {user.token == null ?? user.token == "" ? navigate('/login') : <Beehives/>}
+    {user.token == null ?? user.token == "" ? navigate('/login') : <BeehiveStats/>}
     </>
   );
 };
-export default BeehiveDash
+export default BeehiveStatsPage
