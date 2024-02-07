@@ -10,6 +10,12 @@ export interface Beehive {
     id: string;
     device: string;
     displayname: string;
+    date?: string,
+    temperature?: string,
+    humidity?: string,
+    air_pressure?: string,
+    weight?: string,
+    food_remaining?: string
   }
 
   export interface Apiary {
