@@ -2,10 +2,10 @@ import { useContext, useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import httpClient from '../httpClient';
 import { UserContext } from '../context/UserContext';
-import { Box, Button, CircularProgress, Flex, FormControl, FormLabel, Grid, GridItem, HStack, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spacer, useDisclosure, useToast } from '@chakra-ui/react';
+import { Button, CircularProgress, Flex, FormControl, FormLabel, Grid, GridItem, HStack, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spacer, useDisclosure, useToast } from '@chakra-ui/react';
 import { Form, useNavigate } from 'react-router-dom';
 import { Apiary } from '../models';
-import { buttonStyles, prevNextButtonStyles } from '../utils/themes';
+import { buttonStyles, modalStyles, prevNextButtonStyles } from '../utils/themes';
 import inside1 from '../assets/inside1.jpg'
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 
@@ -143,8 +143,10 @@ const Dashboard = () => {
             </GridItem>
             <GridItem colSpan={6}> 
                 {apiaryMeasurements.length > 0 ? (
-                <Box sx={{ backgroundColor: 'rgba(255, 189, 33, 0.8)', padding: '5vmin', borderRadius: "15px"}}>
-                <Heading as="h3">Measurements in the {apiary && apiary["name"]} apiary in {apiary && apiary["location"]}</Heading>
+                <Grid sx={{ backgroundColor: 'rgba(255, 189, 33, 0.7)', padding: '5vmin', borderRadius: "15px"}}>
+                <GridItem justifySelf='center'>
+                  <Heading as="h2">Temperature and humidity in {apiary && apiary["name"]} apiary in {apiary && apiary["location"]}</Heading>
+                </GridItem>
                 <ResponsiveContainer aspect={2}>
                     <LineChart data={apiaryMeasurements} margin={{ top: 40, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -162,20 +164,20 @@ const Dashboard = () => {
                 <Button sx={buttonStyles} onClick={()=> navigate(`/beehivedash/${currentApiary}`)}>Check Beehives</Button>
                 <Button sx={buttonStyles} onClick={onOpen}>Edit apiary</Button>
                 <Modal isOpen={isOpen} onClose={onClose}>
-                    <ModalOverlay />
-                    <ModalContent>
+                    <ModalOverlay/>
+                    <ModalContent sx={modalStyles}>
                     <ModalHeader>Edit apiary {apiary && apiary["name"]}</ModalHeader>
                     <ModalCloseButton/>
                     <ModalBody>
-                        <Flex p="10px" mb="10px" flexDirection="column" alignItems="center">
+                        <Flex  >
                         <Form>
                             <FormControl>
-                            <FormLabel>New name</FormLabel>
-                            <Input type="text" placeholder={apiary && apiary["name"]} onChange={handleNameChange}/>
+                              <FormLabel>New name</FormLabel>
+                              <Input type="text" placeholder={apiary && apiary["name"]} onChange={handleNameChange}/>
                             </FormControl>
                             <FormControl>
-                            <FormLabel>Location</FormLabel>
-                            <Input type="text" placeholder={apiary && apiary["location"]} onChange={handleLocationChange}/>
+                              <FormLabel>Location</FormLabel>
+                              <Input type="text" placeholder={apiary && apiary["location"]} onChange={handleLocationChange}/>
                             </FormControl>
                         </Form>
                         </Flex>
@@ -191,7 +193,7 @@ const Dashboard = () => {
                 </Modal>
                 <Spacer/>
                 </HStack>
-                </Box>
+                </Grid>
                 ) : (
                 <Heading margin='10px'>No data</Heading>
                 )}

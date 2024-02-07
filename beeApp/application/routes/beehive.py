@@ -4,7 +4,7 @@ from flask import (
 from flask_bcrypt import Bcrypt
 from application.models import *
 from application.extensions import bcrypt, jwt
-from sqlalchemy import or_
+from sqlalchemy import or_, desc
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
 from application.config import ApplicationConfig
 from application.extensions import jwt, jwt_redis_blocklist
@@ -80,10 +80,11 @@ def add_measurement():
 
     return jsonify({"message": "Beehive measurements added successfully."})
 
-@bp.route('/get_beehives/<page>', methods=["GET"])
+@bp.route('/get_beehives/<ap>/<page>', methods=["GET"])
 @jwt_required()
-def get_beehives(page):
+def get_beehives(ap, page):
     try:
+        ap = int(ap)
         page = int(page)
     except ValueError:
         return jsonify({"message": "Invalid apiary."}), 400
@@ -93,20 +94,47 @@ def get_beehives(page):
     if not user:
         return jsonify({"message": "User not found."}), 404
     
-    apiary = Apiary.query.filter_by(user=user).offset(page - 1).limit(1).first()
+    apiary = Apiary.query.filter_by(user=user).offset(ap - 1).limit(1).first()
     beehives = (
         Beehive.query
         .filter_by(apiary=apiary)
+        .offset((page - 1) * 8)
+        .limit(8)
         .all()
     )
     
-    beehives_data = [
-        {
+    if not beehives:
+        return jsonify({"message": "No data"}), 204
+    
+    beehives_data = []
+    for beehive in beehives:
+        latest_measurement = (
+        Beehive_Measurement.query.filter_by(beehive=beehive)
+        .order_by(desc(Beehive_Measurement.date))
+        .first())
+        
+        if latest_measurement:
+                    beehives_data.append({
             "device": beehive.device,
-            "displayname": beehive.displayname
-        }
-        for beehive in beehives
-    ]
+            "displayname": beehive.displayname,
+            "date": latest_measurement.date,
+            "temperature": round(float(latest_measurement.temperature), 1),
+            "humidity": round(float(latest_measurement.humidity), 2),
+            "air_pressure": round(float(latest_measurement.air_pressure), 2),
+            "weight": round(float(latest_measurement.weight), 2),
+            "food_remaining": round(float(latest_measurement.food_remaining), 2)
+        })
+        else:
+            beehives_data.append({
+                "device": beehive.device,
+                "displayname": beehive.displayname,
+                "date": None,
+                "temperature": None,
+                "humidity": None,
+                "air_pressure": None,
+                "weight": None,
+                "food_remaining": None
+            })
 
     return jsonify({
         "beehives": beehives_data
