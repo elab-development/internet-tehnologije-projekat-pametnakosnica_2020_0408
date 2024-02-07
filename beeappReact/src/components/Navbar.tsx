@@ -1,31 +1,16 @@
 import { 
-  Flex, 
-  Heading, 
-  Text, 
-  Button, 
-  Spacer, 
-  HStack,
-  Link,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-  FormControl,
-  FormLabel,
-  Input,
-  useToast,
+  Flex, Heading, Button, Spacer, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure, FormControl, FormLabel, Input, useToast, CircularProgress ,Image, Grid, GridItem,
 } from "@chakra-ui/react"
 import { useContext, useState } from "react"
 import { UserContext } from '../context/UserContext'
 import httpClient from "../httpClient"
 import { Form, useNavigate } from "react-router-dom"
+import logo from '../assets/logo.png'
+import { buttonStyles, flexStyles } from "../utils/themes"
 
 export default function Navbar() {
   const {user, setUser} = useContext(UserContext)
+  const {loading, } = useContext(UserContext)
   const navigate = useNavigate()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [apiaryName, setApiaryName] = useState('')
@@ -89,54 +74,81 @@ export default function Navbar() {
     }
   }
 
-
   return (
-    <Flex as="nav" p="10px" mb="60px" alignItems="center" justifyContent='center'>
-    <Heading as="h1" fontSize="1.5em">Bee Smart</Heading>
-    <Spacer />
-    <HStack spacing="20px">
-      {user.token && user.token !== "" && user.token !== null ? (
-        <>
-          <Button onClick={() => navigate('../dashboard')}>Apiary Dashboard</Button>
-          <Button onClick={onOpen}>Create new apiary</Button>
-          <Spacer/>
-          <Text>{user.username}</Text>
-          <Button onClick={() => logoutUser()}>Logout</Button>
-
-          <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Create new apiary</ModalHeader>
-              <ModalCloseButton/>
-              <ModalBody>
-              <Flex p="10px" mb="10px" flexDirection="column" alignItems="center">
-                    <Form>
-                        <FormControl>
-                        <FormLabel>Name</FormLabel>
-                        <Input type="text" onChange={handleNameChange}/>
-                        </FormControl>
-                        <FormControl>
-                        <FormLabel>Location</FormLabel>
-                        <Input type="text" onChange={handleLocationChange}/>
-                        </FormControl>
-                    </Form>
-                </Flex>
-              </ModalBody>
-              <ModalFooter justifyContent='center'>
-                <Button colorScheme='blue' mr={3} onClick={()=> {onClose(); createApiary();}}>
-                  Create
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-        </>
-      ) : (   
-        <>    
-          <Button onClick={()=> window.location.href = '/login'}>Login</Button>
-          <Link fontWeight='bold' onClick={()=> window.location.href = '/register'}>Register</Link>
-        </>
-      )}
-    </HStack>
-  </Flex>
+    <Grid
+      sx={{
+        ...flexStyles,
+        borderBottom: '5px solid #352f31',
+        textAlign: 'center',
+      }}
+      as="nav"
+      templateColumns='repeat(3, 1fr)'
+      gap={1}
+    >
+      <GridItem>
+        <HStack>
+          <Image src={logo} />
+          <Heading as="h1" fontSize="3.5em" fontStyle='bold'>Bee Smart</Heading>
+        </HStack>
+      </GridItem>
+        <Heading>
+        {loading ? (
+            <CircularProgress isIndeterminate color='#352f31' thickness='12px'/>
+        ) : (
+            user.username !== "" && user.username !== null ? `Welcome ${user.username}` : ""
+        )}
+        </Heading>
+      <GridItem justifySelf="end">
+        <HStack spacing="20px">
+          {loading ? (
+            <></>
+          ) : (
+            <>
+              {user.token && user.token !== null ? (
+                <>
+                  <HStack>
+                    <Button sx={buttonStyles} onClick={() => navigate('../dashboard')}>Apiary Dashboard</Button>
+                    <Button sx={buttonStyles} onClick={onOpen}>Create new apiary</Button>
+                    <Spacer/>
+                    <Button sx={buttonStyles} onClick={() => logoutUser()}>Logout</Button>
+                    <Modal isOpen={isOpen} onClose={onClose}>
+                      <ModalOverlay />
+                      <ModalContent>
+                        <ModalHeader>Create new apiary</ModalHeader>
+                        <ModalCloseButton/>
+                        <ModalBody>
+                          <Flex p="10px" mb="10px" flexDirection="column" alignItems="center">
+                            <Form>
+                              <FormControl>
+                                <FormLabel>Name</FormLabel>
+                                <Input type="text" onChange={handleNameChange}/>
+                              </FormControl>
+                              <FormControl>
+                                <FormLabel>Location</FormLabel>
+                                <Input type="text" onChange={handleLocationChange}/>
+                              </FormControl>
+                            </Form>
+                          </Flex>
+                        </ModalBody>
+                        <ModalFooter justifyContent='center'>
+                          <Button colorScheme='blue' mr={3} onClick={()=> {onClose(); createApiary();}}>
+                            Create
+                          </Button>
+                        </ModalFooter>
+                      </ModalContent>
+                    </Modal>
+                  </HStack>
+                </>
+              ) : (   
+                <>    
+                  <Button sx={buttonStyles} onClick={()=> window.location.href = '/login'}>Login</Button>
+                  <Link fontWeight='bold' onClick={()=> window.location.href = '/register'}>Register</Link>
+                </>
+              )}
+            </>
+          )}
+        </HStack>
+      </GridItem>
+    </Grid>
   )
 }

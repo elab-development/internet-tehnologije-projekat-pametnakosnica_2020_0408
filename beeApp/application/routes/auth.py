@@ -25,11 +25,11 @@ def login_user():
     print(password)
     
     user = User.query.filter_by(email=email).first()
-    print(user.id)
     
     
     if user is None:
         return jsonify({"error": "Unauthorized"}), 401
+    print(user.id)
     
     if not bcrypt.check_password_hash(user.password, password):
         return jsonify({"error": "Unauthorized"}), 401
