@@ -1,5 +1,5 @@
 import { 
-  Flex, Heading, Button, Spacer, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure, FormControl, FormLabel, Input, useToast, CircularProgress ,Image, Center, Grid, GridItem,
+  Flex, Heading, Button, Spacer, HStack, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure, FormControl, FormLabel, Input, useToast, CircularProgress ,Image, Grid, GridItem,
 } from "@chakra-ui/react"
 import { useContext, useState } from "react"
 import { UserContext } from '../context/UserContext'
