@@ -154,12 +154,11 @@ const Dashboard = () => {
                     <YAxis />
                     <Tooltip contentStyle={{backgroundColor: "#ffbd21", borderRadius: "15px"}} itemStyle={{ color: "#352f31", fontWeight: 'bold'}} />
                     <Legend />
-                    <Line type="monotone" dataKey="temperature" stroke="red" name="Temperature" strokeWidth='4px' />
-                    <Line type="monotone" dataKey="humidity" stroke="blue" name="Humidity" strokeWidth='4px'/>
+                    <Line type="linear" dataKey="temperature" stroke="#fc1a0a" name="Temperature" strokeWidth='4px'/>
+                    <Line type="linear" dataKey="humidity" stroke="#4284f5" name="Humidity" strokeWidth='4px'/>
                     </LineChart>
                 </ResponsiveContainer>
                 <HStack>
-                
                 <Spacer/>
                 <Button sx={buttonStyles} onClick={()=> navigate(`/beehivedash/${currentApiary}`)}>Check Beehives</Button>
                 <Button sx={buttonStyles} onClick={onOpen}>Edit apiary</Button>
@@ -204,83 +203,6 @@ const Dashboard = () => {
             </>
         )}
     </Grid>
-
-    // <Grid
-    //     alignItems="center"
-    //     justifyContent="center"
-    //     height="100vh"
-    //     sx={{
-    //         backgroundImage: inside1,
-    //         backgroundRepeat: 'no-repeat',
-    //         backgroundAttachment: 'fixed',
-    //         backgroundPosition: 'top',
-    //         backgroundSize: 'cover',
-    //         backdropFilter: 'blur(5px)',
-    //     }}
-    //     >
-    //   {loading ? (
-    //     <GridItem>
-    //       <CircularProgress isIndeterminate color='#352f31' thickness='12px'/>
-    //     </GridItem>
-    //   ) : (
-    //     <>
-    //         {apiaryMeasurements.length > 0 ? (
-    //         <Box sx={{ backgroundColor: 'rgba(255, 189, 33, 0.8)', padding: '5vmin', borderRadius: "15px"}}>
-    //           <Heading as="h3">Measurements in the {apiary && apiary["name"]} apiary in {apiary && apiary["location"]}</Heading>
-    //           <ResponsiveContainer aspect={1.05}>
-    //             <LineChart data={apiaryMeasurements} margin={{ top: 40, right: 30, left: 20, bottom: 5 }}>
-    //               <CartesianGrid strokeDasharray="3 3" />
-    //               <XAxis dataKey="date" />
-    //               <YAxis />
-    //               <Tooltip contentStyle={{backgroundColor: "#ffbd21", borderRadius: "15px"}} itemStyle={{ color: "#352f31", fontWeight: 'bold'}} />
-    //               <Legend />
-    //               <Line type="monotone" dataKey="temperature" stroke="red" name="Temperature" strokeWidth='4px' />
-    //               <Line type="monotone" dataKey="humidity" stroke="blue" name="Humidity" strokeWidth='4px'/>
-    //             </LineChart>
-    //           </ResponsiveContainer>
-    //           <HStack>
-    //           <Button sx={buttonStyles} onClick={()=> {if (currentApiary > 1) {setCurrentApiary(currentApiary-1)}}}>Previous</Button>
-    //           <Spacer/>
-    //           <Button sx={buttonStyles} onClick={()=> navigate(`/beehivedash/${currentApiary}`)}>Check Beehives</Button>
-    //           <Button sx={buttonStyles} onClick={onOpen}>Edit apiary</Button>
-    //           <Modal isOpen={isOpen} onClose={onClose}>
-    //             <ModalOverlay />
-    //             <ModalContent>
-    //               <ModalHeader>Edit apiary {apiary && apiary["name"]}</ModalHeader>
-    //               <ModalCloseButton/>
-    //               <ModalBody>
-    //                 <Flex p="10px" mb="10px" flexDirection="column" alignItems="center">
-    //                   <Form>
-    //                     <FormControl>
-    //                       <FormLabel>New name</FormLabel>
-    //                       <Input type="text" placeholder={apiary && apiary["name"]} onChange={handleNameChange}/>
-    //                     </FormControl>
-    //                     <FormControl>
-    //                       <FormLabel>Location</FormLabel>
-    //                       <Input type="text" placeholder={apiary && apiary["location"]} onChange={handleLocationChange}/>
-    //                     </FormControl>
-    //                   </Form>
-    //                 </Flex>
-    //               </ModalBody>
-    //               <ModalFooter justifyContent='center'>
-    //                 <Button colorScheme='red' mr={3} onClick={()=> {onClose(); deleteApiary()}}>Delete apiary</Button>
-    //                 <Button colorScheme='blue' mr={3} onClick={()=> {onClose(); editApiary()}}>
-    //                   Save changes
-    //                 </Button>
-    //                 <Button onClick={onClose}>Cancel</Button>
-    //               </ModalFooter>
-    //             </ModalContent>
-    //           </Modal>
-    //           <Spacer/>
-    //           <Button sx={buttonStyles} onClick={()=> setCurrentApiary(currentApiary+1)}>Next</Button>
-    //         </HStack>
-    //         </Box>
-    //         ) : (
-    //           <Heading margin='10px'>No data</Heading>
-    //         )}
-    //     </>
-    //   )}
-    // </Grid>
   )
 };
 
