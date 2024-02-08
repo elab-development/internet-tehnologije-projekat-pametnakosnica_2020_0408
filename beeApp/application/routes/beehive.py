@@ -83,6 +83,7 @@ def add_measurement():
 @bp.route('/get_beehives/<ap>/<page>', methods=["GET"])
 @jwt_required()
 def get_beehives(ap, page):
+    search_query = request.args.get('search')  # Get the search query from the request
     try:
         ap = int(ap)
         page = int(page)
@@ -95,35 +96,37 @@ def get_beehives(ap, page):
         return jsonify({"message": "User not found."}), 404
     
     apiary = Apiary.query.filter_by(user=user).offset(ap - 1).limit(1).first()
-    beehives = (
-        Beehive.query
-        .filter_by(apiary=apiary)
-        .offset((page - 1) * 8)
-        .limit(8)
-        .all()
-    )
+    
+    beehives_query = Beehive.query.filter_by(apiary=apiary)
+    
+    if search_query:
+        beehives_query = beehives_query.filter(or_(
+            Beehive.device.ilike(f'%{search_query}%'),
+            Beehive.displayname.ilike(f'%{search_query}%')
+        ))
+    
+    beehives_query = beehives_query.offset((page - 1) * 8).limit(8)
+    
+    beehives = beehives_query.all()
     
     if not beehives:
         return jsonify({"message": "No data"}), 204
     
     beehives_data = []
     for beehive in beehives:
-        latest_measurement = (
-        Beehive_Measurement.query.filter_by(beehive=beehive)
-        .order_by(desc(Beehive_Measurement.date))
-        .first())
+        latest_measurement = Beehive_Measurement.query.filter_by(beehive=beehive).order_by(desc(Beehive_Measurement.date)).first()
         
         if latest_measurement:
-                    beehives_data.append({
-            "device": beehive.device,
-            "displayname": beehive.displayname,
-            "date": latest_measurement.date,
-            "temperature": round(float(latest_measurement.temperature), 1),
-            "humidity": round(float(latest_measurement.humidity), 2),
-            "air_pressure": round(float(latest_measurement.air_pressure), 2),
-            "weight": round(float(latest_measurement.weight), 2),
-            "food_remaining": round(float(latest_measurement.food_remaining), 2)
-        })
+            beehives_data.append({
+                "device": beehive.device,
+                "displayname": beehive.displayname,
+                "date": latest_measurement.date,
+                "temperature": round(float(latest_measurement.temperature), 1),
+                "humidity": round(float(latest_measurement.humidity), 2),
+                "air_pressure": round(float(latest_measurement.air_pressure), 2),
+                "weight": round(float(latest_measurement.weight), 2),
+                "food_remaining": round(float(latest_measurement.food_remaining), 2)
+            })
         else:
             beehives_data.append({
                 "device": beehive.device,
@@ -139,6 +142,7 @@ def get_beehives(ap, page):
     return jsonify({
         "beehives": beehives_data
     }), 200
+
     
 @bp.route('/get_measurements/<apiary>/<beehive>', methods=["GET"])
 @jwt_required()

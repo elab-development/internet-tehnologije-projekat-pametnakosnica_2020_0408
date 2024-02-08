@@ -86,10 +86,12 @@ export default function Navbar() {
       gap={1}
     >
       <GridItem>
-        <HStack>
-          <Image src={logo} />
-          <Heading as="h1" fontSize="3.5em" fontStyle='bold'>Bee Smart</Heading>
-        </HStack>
+        <Link onClick={() => {navigate('/') }} _hover={{fontStyle: 'normal'}}>
+          <HStack>
+            <Image src={logo} />
+            <Heading as="h1" fontSize="3.5em" fontStyle='bold'>Bee Smart</Heading>
+          </HStack>
+        </Link>
       </GridItem>
         <Heading>
         {loading ? (
