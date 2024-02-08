@@ -136,10 +136,10 @@ const BeehiveStats = () => {
         <GridItem rowSpan={1} justifySelf='center' mt="8vh">
         <HStack gap={10}>
             <Button sx={buttonStyles} onClick={() => navigate(`/beehivedash/${apiaryId}`)} >Back</Button>
-            <Button sx={buttonStyles} onClick={onOpen} >Edit beehive</Button>
+            <Button sx={buttonStyles} onClick={onOpen}>Edit beehive</Button>
             {beehiveMeasurements.length > 0 && (
                 <CSVLink data={beehiveMeasurements} filename={`${beehive?.displayname}.csv`}>
-                    DOWNLOAD DATA
+                    <b>DOWNLOAD DATA</b>
                 </CSVLink>
             )}
             <Modal isOpen={isOpen} onClose={onClose}>
@@ -186,6 +186,9 @@ const BeehiveStats = () => {
               gap: 5
             }}>
               <GridItem rowSpan={3}>
+                <HStack justifyContent='center' alignItems='center' mb='2vh'>
+                  <Heading>Beehive ID: {beehive?.id ?? ""}</Heading>
+                </HStack>
                 <HStack>
                   <ResponsiveContainer width="90%" height={300}>
                     <LineChart data={beehiveMeasurements} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -227,6 +230,7 @@ const BeehiveStats = () => {
           ) : (
             <GridItem colSpan={6} justifySelf='center'>
                 <Heading>No data</Heading>
+                <Heading>Beehive ID: {beehive?.id ?? ""}</Heading>
             </GridItem>
           )}
         </>

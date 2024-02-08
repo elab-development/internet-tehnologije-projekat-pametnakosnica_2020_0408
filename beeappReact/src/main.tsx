@@ -12,11 +12,13 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import { theme } from './utils/themes';
 import BeehiveStatsPage from './pages/BeehiveStatsPage';
+import AdminDash from './pages/AdminDash';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<RootLayout/>}>
       <Route index element={<LandingPage/>}/>
+      <Route path='admin' element={<AdminDash/>}/>
       <Route path='login' element={<LoginPage/>}/>
       <Route path='register' element={<Register/>}/>
       <Route path='dashboard' element={<DashboardPage/>}/>

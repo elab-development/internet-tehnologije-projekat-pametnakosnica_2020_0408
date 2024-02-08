@@ -1,7 +1,9 @@
 import {useState} from 'react'
 import httpClient from '../httpClient'
-import { Button, Flex, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
-import { Form, useNavigate } from 'react-router-dom'
+import { Button, FormLabel, Grid, GridItem, Heading, Input } from '@chakra-ui/react'
+import { useNavigate } from 'react-router-dom'
+import inside1 from '../assets/inside1.jpg'
+import { buttonStyles } from '../utils/themes'
 
 const Register = () => {
     const[email, setEmail] = useState("")
@@ -13,7 +15,6 @@ const Register = () => {
     
 
     const registerUser = async () =>{
-        // console.log(email, password);
 
         try{
             await httpClient.post("//localhost:5000/auth/register", {
@@ -35,32 +36,53 @@ const Register = () => {
     };
 
   return (
-    <Flex p="10px" mb="60px" flexDirection='column' alignItems='center'>
-    <Heading as="h2" marginBottom={5}>Register</Heading>
-    <Form>
-        <FormControl display='flex' flexDir='column' alignItems='center'>
+    <Grid    
+    alignItems="center"
+    justifyContent="center"
+    sx={{
+        backgroundImage: inside1,
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        backgroundPosition: 'top',
+        backgroundSize: 'cover',
+        backdropFilter: 'blur(5px)',
+    }}>
+    <Grid
+    sx={{ backgroundColor: 'rgba(255, 189, 33, 0.7)', padding: '5vmin', borderRadius: "15px"}}
+    templateRows='repeat(8, 1fr)'
+    gap={5}
+    mt='5vh'
+    mb='5vh'
+    height='75vh'
+    >
+        <GridItem rowSpan={1} justifySelf='center'>
+            <Heading as="h2" marginBottom={5}>Register</Heading>
+        </GridItem>
+        <GridItem rowSpan={1}>
             <FormLabel>Email</FormLabel>
-            <Input type="text" onChange={(e)=> setEmail(e.target.value)}/>
-        </FormControl>
-        <FormControl>
+            <Input sx={buttonStyles} _focus={{bg:'#ffd77a', color: '#352f31'}} type="text" onChange={(e)=> setEmail(e.target.value)}/>
+        </GridItem>
+        <GridItem rowSpan={1}>
             <FormLabel>Password</FormLabel>
-            <Input type="password" onChange={(e)=> setPassword(e.target.value)}/>
-        </FormControl>
-        <FormControl>
+            <Input sx={buttonStyles} _focus={{bg:'#ffd77a', color: '#352f31'}} type="password" onChange={(e)=> setPassword(e.target.value)}/>
+        </GridItem>
+        <GridItem rowSpan={1}>
             <FormLabel>Username</FormLabel>
-            <Input type="text" onChange={(e)=> setUsername(e.target.value)}/>
-        </FormControl>
-        <FormControl>
+            <Input sx={buttonStyles} _focus={{bg:'#ffd77a', color: '#352f31'}} type="text" onChange={(e)=> setUsername(e.target.value)}/>
+        </GridItem>
+        <GridItem rowSpan={1}>
             <FormLabel>Firstname</FormLabel>
-            <Input type="text" onChange={(e)=> setFirstName(e.target.value)}/>
-        </FormControl>
-        <FormControl>
+            <Input sx={buttonStyles} _focus={{bg:'#ffd77a', color: '#352f31'}} type="text" onChange={(e)=> setFirstName(e.target.value)}/>
+        </GridItem>
+        <GridItem rowSpan={1}>
             <FormLabel>Lastname</FormLabel>
-            <Input type="text" onChange={(e)=> setLastName(e.target.value)}/>
-        </FormControl>
-        <Button type='button' onClick={()=>registerUser()}>Register</Button>
-    </Form>
-</Flex>
+            <Input sx={buttonStyles} _focus={{bg:'#ffd77a', color: '#352f31'}} type="text" onChange={(e)=> setLastName(e.target.value)}/>
+        </GridItem>
+        <GridItem rowSpan={1}>
+            <Button sx={buttonStyles} type='button' onClick={()=>registerUser()}>Register</Button>
+        </GridItem>
+    </Grid>
+    </Grid>
   )
 }
 
