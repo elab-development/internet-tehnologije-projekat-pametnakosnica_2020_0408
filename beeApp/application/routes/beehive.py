@@ -1,17 +1,11 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, abort, jsonify
+    Blueprint, request, jsonify
 )
-from flask_bcrypt import Bcrypt
 from application.models import *
-from application.extensions import bcrypt, jwt
 from sqlalchemy import or_, desc
-from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
-from application.config import ApplicationConfig
-from application.extensions import jwt, jwt_redis_blocklist
-
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from datetime import timedelta, datetime
 import random
-import math
 
 bp = Blueprint('beehive', __name__, url_prefix='/apiary/beehive')
 
@@ -54,12 +48,12 @@ def add_measurement():
     if not beehive:
         return jsonify({"message": "Beehive not found."}), 404
 
-    current_time = datetime.utcnow()  # Current UTC time
+    current_time = datetime.utcnow()
     beehive_measurements = []
     for i in range(50):
         date = current_time - timedelta(hours=i)
         temperature = random.uniform(9, 32)
-        humidity = random.uniform(70, 90)  # High humidity
+        humidity = random.uniform(70, 90) 
         air_pressure = random.uniform(1000, 1020)
         weight = random.uniform(10, 50)
         food_remaining = random.uniform(1, 3)

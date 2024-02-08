@@ -33,7 +33,7 @@ const Login = () => {
             const resp = await httpClient.post("//localhost:5000/auth/login", data, headers);
             if(resp.status === 200){
                 console.log(resp.data.access_token)
-                setUser({token: resp.data.access_token, username: null, email: null})
+                setUser({token: resp.data.access_token, username: null, email: null, role: null})
                 navigate('../dashboard')
             }
         }

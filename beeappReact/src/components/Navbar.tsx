@@ -35,8 +35,9 @@ export default function Navbar() {
         token: null,
         username: null,
         email: null,
+        role: null
       })
-      window.location.href = '/'
+      navigate('/')
   }
 
   const createApiary = async () =>{
@@ -109,6 +110,9 @@ export default function Navbar() {
               {user.token && user.token !== null ? (
                 <>
                   <HStack>
+                    {user.role === "Administrator" && (
+                      <Button sx={buttonStyles} onClick={() => navigate('../admin')}>Admin</Button>
+                    )}
                     <Button sx={buttonStyles} onClick={() => navigate('../dashboard')}>Apiary Dashboard</Button>
                     <Button sx={buttonStyles} onClick={onOpen}>Create new apiary</Button>
                     <Spacer/>

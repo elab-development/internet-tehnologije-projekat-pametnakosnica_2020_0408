@@ -11,6 +11,7 @@ type TokenData = {
   token: string | null;
   username: string | null;
   email: string | null;
+  role: string | null;
 };
 
 const defaultState: UserContextInterface = {
@@ -18,6 +19,7 @@ const defaultState: UserContextInterface = {
     token: localStorage.getItem("jwt_token"),
     username: null,
     email: null,
+    role: null
   },
   setUser: () => {},
   loading: true
@@ -51,6 +53,7 @@ export default function UserProvider({ children }: UserProviderProps) {
               ...user,
               username: resp.data.username,
               email: resp.data.email,
+              role: resp.data.rolename
             });
             localStorage.setItem("jwt_token", user.token ?? "");
           }
@@ -61,6 +64,7 @@ export default function UserProvider({ children }: UserProviderProps) {
             token: null,
             username: null,
             email: null,
+            role: null
           });
         }
       }
