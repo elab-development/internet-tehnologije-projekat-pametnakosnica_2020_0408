@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import httpClient from '../httpClient';
 import { UserContext } from '../context/UserContext';
-import { Button, CircularProgress, Flex, FormControl, FormLabel, Grid, GridItem, HStack, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spacer, useDisclosure, useToast } from '@chakra-ui/react';
+import { Button, CircularProgress, Flex, FormControl, FormLabel, Grid, GridItem, HStack, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spacer, VStack, useDisclosure, useToast } from '@chakra-ui/react';
 import { Form, useNavigate } from 'react-router-dom';
 import { Apiary } from '../models';
 import { buttonStyles, modalStyles, prevNextButtonStyles } from '../utils/themes';
@@ -194,7 +194,47 @@ const Dashboard = () => {
                 </HStack>
                 </Grid>
                 ) : (
-                <Heading margin='10px'>No data</Heading>
+                <Grid sx={{ backgroundColor: 'rgba(255, 189, 33, 0.7)', padding: '5vmin', borderRadius: "15px"}}>
+                  <GridItem justifySelf='center'>
+                    <VStack>
+                      <Heading >{apiary && apiary["name"]} apiary in {apiary && apiary["location"]}</Heading>
+                      <Heading margin='10px'>No data</Heading>
+                    </VStack>
+                  </GridItem>
+                  <HStack>
+                    <Spacer/>
+                    <Button sx={buttonStyles} onClick={onOpen}>Edit apiary</Button>
+                    <Modal isOpen={isOpen} onClose={onClose}>
+                        <ModalOverlay/>
+                        <ModalContent sx={modalStyles}>
+                        <ModalHeader>Edit apiary {apiary && apiary["name"]}</ModalHeader>
+                        <ModalCloseButton/>
+                        <ModalBody>
+                            <Flex  >
+                            <Form>
+                                <FormControl>
+                                  <FormLabel>New name</FormLabel>
+                                  <Input type="text" placeholder={apiary && apiary["name"]} onChange={handleNameChange}/>
+                                </FormControl>
+                                <FormControl>
+                                  <FormLabel>Location</FormLabel>
+                                  <Input type="text" placeholder={apiary && apiary["location"]} onChange={handleLocationChange}/>
+                                </FormControl>
+                            </Form>
+                            </Flex>
+                        </ModalBody>
+                        <ModalFooter justifyContent='center'>
+                            <Button colorScheme='red' mr={3} onClick={()=> {onClose(); deleteApiary()}}>Delete apiary</Button>
+                            <Button colorScheme='blue' mr={3} onClick={()=> {onClose(); editApiary()}}>
+                            Save changes
+                            </Button>
+                            <Button onClick={onClose}>Cancel</Button>
+                        </ModalFooter>
+                        </ModalContent>
+                    </Modal>
+                    <Spacer/>
+                    </HStack>
+                </Grid>
                 )}
             </GridItem >
             <GridItem colSpan={1} justifySelf="start">
