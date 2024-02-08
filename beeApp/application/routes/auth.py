@@ -1,12 +1,10 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, abort, jsonify
+    Blueprint, request, session, jsonify
 )
-from flask_bcrypt import Bcrypt
 from application.models import *
 from application.extensions import bcrypt, jwt
 from sqlalchemy import or_
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
-from application.config import ApplicationConfig
 from application.extensions import jwt, jwt_redis_blocklist
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -26,13 +24,15 @@ def login_user():
     
     user = User.query.filter_by(email=email).first()
     
-    
     if user is None:
-        return jsonify({"error": "Unauthorized"}), 401
+        return jsonify({"msg": "Unauthorized"}), 401
     print(user.id)
     
     if not bcrypt.check_password_hash(user.password, password):
-        return jsonify({"error": "Unauthorized"}), 401
+        return jsonify({"msg": "Unauthorized"}), 401
+    
+    if user.banned:
+        return jsonify({"msg": "Unauthorized"}), 401
     
     access_token = create_access_token(identity=email)
     

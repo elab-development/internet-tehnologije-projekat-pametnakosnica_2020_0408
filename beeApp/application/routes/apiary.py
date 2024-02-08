@@ -1,12 +1,8 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, abort, jsonify
+    Blueprint, request, jsonify
 )
-from flask_bcrypt import Bcrypt
 from application.models import *
-from application.extensions import bcrypt, jwt
-from sqlalchemy import or_
-from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
-from application.config import ApplicationConfig
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from application.extensions import jwt, jwt_redis_blocklist
 
 from datetime import timedelta, datetime
@@ -44,35 +40,32 @@ def create_apiary():
 
 @bp.route('/addMeasurement', methods=["POST"])
 def add_measurement():
-    apiary = Apiary.query.get("f2904288959948c6ab094e650986950d")
+    data = request.json
+    apiary_id = data.get('apiary_id')
+    temperature = data.get('temperature')
+    humidity = data.get('humidity')
+    air_pressure = data.get('air_pressure')
 
+    if not (apiary_id and temperature and humidity and air_pressure):
+        return jsonify({'message': 'Missing required fields.'}), 400
+
+    apiary = Apiary.query.get(apiary_id)
     if not apiary:
-        return jsonify({"message": "Apiary not found."}), 404
+        return jsonify({'message': 'Apiary not found.'}), 404
 
-    spring_start_date = datetime(2023, 3, 1, 0, 0, 0)
+    measurement = Apiary_Measurement(
+        date=datetime.now(),
+        temperature=temperature,
+        humidity=humidity,
+        air_pressure=air_pressure,
+        apiary=apiary
+    )
     
-    apiary_measurements = []
-    for j in range(1, 3):
-        for i in range(50):
-            date = spring_start_date + timedelta(hours=i)
-            temperature_variation = 5 * math.sin((2 * math.pi / 24) * date.hour)
-            temperature = random.uniform(15, 25) + temperature_variation
-            humidity = random.uniform(40, 70)
-            air_pressure = random.uniform(1000, 1020)
-
-            measurement = Apiary_Measurement(
-                date=date,
-                temperature=temperature,
-                humidity=humidity,
-                air_pressure=air_pressure,
-                apiary=apiary
-            )
-            apiary_measurements.append(measurement)
-            
-    db.session.add_all(apiary_measurements)
+    db.session.add(measurement)
     db.session.commit()
 
-    return jsonify({"message": "Apiary measurements added successfully."})
+    return jsonify({'message': 'Measurement added successfully.'}), 201
+
 
 @bp.route('/get_measurements/<page>', methods=["GET"])
 @jwt_required()

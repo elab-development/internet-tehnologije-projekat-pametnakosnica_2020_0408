@@ -41,38 +41,40 @@ def create_apiary(page):
 
     return jsonify({"message": "Beehive added successfully."})
 
+from flask import request, jsonify
+from datetime import datetime
+
 @bp.route('/add_measurement', methods=["POST"])
 def add_measurement():
-    beehive = Beehive.query.get("b3fa6c64850a44cf919862de6e53103d")
+    data = request.json
+    beehive_id = data.get('beehive_id')
+    temperature = data.get('temperature')
+    humidity = data.get('humidity')
+    air_pressure = data.get('air_pressure')
+    weight = data.get('weight')
+    food_remaining = data.get('food_remaining')
 
+    if not (beehive_id and temperature and humidity and air_pressure and weight and food_remaining):
+        return jsonify({'message': 'Missing required fields.'}), 400
+
+    beehive = Beehive.query.get(beehive_id)
     if not beehive:
-        return jsonify({"message": "Beehive not found."}), 404
+        return jsonify({'message': 'Beehive not found.'}), 404
 
-    current_time = datetime.utcnow()
-    beehive_measurements = []
-    for i in range(50):
-        date = current_time - timedelta(hours=i)
-        temperature = random.uniform(9, 32)
-        humidity = random.uniform(70, 90) 
-        air_pressure = random.uniform(1000, 1020)
-        weight = random.uniform(10, 50)
-        food_remaining = random.uniform(1, 3)
+    measurement = Beehive_Measurement(
+        date=datetime.now(),
+        temperature=temperature,
+        humidity=humidity,
+        air_pressure=air_pressure,
+        weight=weight,
+        food_remaining=food_remaining,
+        beehive=beehive
+    )
 
-        measurement = Beehive_Measurement(
-            date=date,
-            temperature=temperature,
-            humidity=humidity,
-            air_pressure=air_pressure,
-            weight=weight,
-            food_remaining=food_remaining,
-            beehive=beehive
-        )
-        beehive_measurements.append(measurement)
-            
-    db.session.add_all(beehive_measurements)
+    db.session.add(measurement)
     db.session.commit()
 
-    return jsonify({"message": "Beehive measurements added successfully."})
+    return jsonify({'message': 'Measurement added successfully.'}), 201
 
 @bp.route('/get_beehives/<ap>/<page>', methods=["GET"])
 @jwt_required()
@@ -185,7 +187,8 @@ def get_beehive_measurements(apiary, beehive):
     return jsonify({
         "beehive": {
             "displayname": beehive.displayname,
-            "device": beehive.device
+            "device": beehive.device,
+            "id": beehive.id
             },
         "beehive_measurements": beehives_data
     }), 200
