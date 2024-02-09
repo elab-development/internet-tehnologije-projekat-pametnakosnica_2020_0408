@@ -146,7 +146,7 @@ const Beehives = () => {
     <Grid
       alignItems="center"
       justifyContent="center"
-      height="100vh"
+      height="170vh"
       sx={{
         backgroundImage: inside1,
         backgroundRepeat: 'no-repeat',
