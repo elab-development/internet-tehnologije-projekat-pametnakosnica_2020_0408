@@ -21,9 +21,14 @@ Nakon uspešne instalacije svih biblioteka i modula, u Powershell-u ili Linux te
 Pokretanje backend-a se vrši pomoći komande `flask run`(u beeApp projektu), a frontend se pokreće komandom `npm run dev`(u beeappReact folderu) 
 
 # Izgled aplikacije
-<img src = "/slike_readme/image.png">
 Landing page
-<img src = "/slike_readme/2.png">
+<img src = "/slike_readme/image.png">
+
 LogIn
-<img src = "/slike_readme/3.png">
+<img src = "/slike_readme/2.png">
+
 Apiary Dashboard
+<img src = "/slike_readme/3.png">
+
+Beehive Dashboard
+<img src = "/slike_readme/4.png">
