@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react'
 import React from 'react'
 
-const CustomButton = (props: { children: React.ReactNode }) => { // Corrected prop name to 'children'
+const CustomButton = (props: { children: React.ReactNode }) => {
   return (
     <Box
       as='button'

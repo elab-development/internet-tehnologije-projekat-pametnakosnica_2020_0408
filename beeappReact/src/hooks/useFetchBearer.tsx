@@ -1,32 +1,44 @@
-import { useEffect, useState, useContext } from "react"
-import { UserContext } from "../context/UserContext"
-import httpClient from "../httpClient"
+import { useState, useEffect, useContext } from 'react';
+import httpClient from '../httpClient';
+import { UserContext } from '../context/UserContext';
 
+export type TApiResponse = {
+  status: Number;
+  statusText: String;
+  data: any;
+  error: any;
+  loading: Boolean;
+};
 
-export default function useFetchBearer(url: string): { data: any[], error: any, loading: boolean } {
-    const { user } = useContext(UserContext);
-    const [data, setData] = useState<any[]>([]); // Set initial value as an empty array
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
+export const useApiGet = (url: string): TApiResponse => {
+  const [status, setStatus] = useState<Number>(0);
+  const [statusText, setStatusText] = useState<String>('');
+  const [data, setData] = useState<any>();
+  const [error, setError] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const { user } = useContext(UserContext);
 
-    useEffect(() => {
-        (async function () {
-            try {
-                setLoading(true);
-                const response = await httpClient.get(url, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${user.token}`
-                    }
-                });
-                setData(response.data);
-            } catch (err: any) {
-                setError(err);
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, [url]);
+  const getAPIData = async () => {
+    setLoading(true);
+    try {
+      const apiResponse = await httpClient.get(url, {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: 'Bearer ' + user.token,
+                },
+              });
+      setStatus(apiResponse.status);
+      setStatusText(apiResponse.statusText);
+      setData(apiResponse.data);
+    } catch (error) {
+      setError(error);
+    }
+    setLoading(false);
+  };
 
-    return { data, error, loading };
-}
+  useEffect(() => {
+    getAPIData();
+  }, []);
+
+  return { status, statusText, data, error, loading };
+};
