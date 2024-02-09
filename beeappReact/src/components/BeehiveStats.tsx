@@ -52,6 +52,7 @@ const BeehiveStats = () => {
               isClosable: true,
               position: 'top'
             })
+            window.location.reload()
         }else{
           toast({
             title: resp.statusText,

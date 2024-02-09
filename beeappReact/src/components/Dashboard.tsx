@@ -120,7 +120,7 @@ const Dashboard = () => {
     <Grid
     alignItems="center"
     justifyContent="center"
-    height="100vh"
+    height="110vh"
     sx={{
         backgroundImage: inside1,
         backgroundRepeat: 'no-repeat',
