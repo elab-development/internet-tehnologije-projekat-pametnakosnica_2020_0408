@@ -11,7 +11,6 @@ const Admin = () => {
   const {user, } = useContext(UserContext)
   const navigate = useNavigate()
   const toast = useToast()
-  //const { isOpen, onOpen, onClose } = useDisclosure()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

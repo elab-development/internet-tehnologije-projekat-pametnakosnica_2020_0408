@@ -17,12 +17,9 @@ const Login = () => {
         if (user.token && user.token !== '' && user.token !== null) {
           navigate('/dashboard');
         }
-        console.log("EVE GA ODJE")
       }, [user.token, navigate]);
 
     const logInUser = async () =>{
-        console.log(email, password);
-
         const data = {
             email,
             password
@@ -34,7 +31,6 @@ const Login = () => {
         try{
             const resp = await httpClient.post("//localhost:5000/auth/login", data, headers);
             if(resp.status === 200){
-                console.log(resp.data.access_token)
                 setUser({token: resp.data.access_token, username: null, email: null, role: null})
                 navigate('../dashboard')
             }

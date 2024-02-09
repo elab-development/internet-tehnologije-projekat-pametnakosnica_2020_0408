@@ -19,14 +19,11 @@ def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
 def login_user():
     email = request.json["email"]
     password = request.json["password"]
-    print(email)
-    print(password)
     
     user = User.query.filter_by(email=email).first()
     
     if user is None:
         return jsonify({"msg": "Unauthorized"}), 401
-    print(user.id)
     
     if not bcrypt.check_password_hash(user.password, password):
         return jsonify({"msg": "Unauthorized"}), 401
@@ -90,7 +87,6 @@ def register_user():
 @bp.route("/logout", methods=["DELETE"])
 @jwt_required()
 def logout_user():
-    print("EVE GA "+ request.headers["Authorization"])
     jti = get_jwt()["jti"]
     jwt_redis_blocklist.set(jti, "")
     return jsonify(msg="Access token revoked")
@@ -110,8 +106,6 @@ def admin():
     users = []
     for user in User.query.all():
         role = Role.query.filter_by(id=user.role_id).first()
-
-        print(user.banned)
         
         users.append({
             "banned": user.banned,
